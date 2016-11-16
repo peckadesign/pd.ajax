@@ -1,0 +1,18 @@
+{
+	"name": "pd.ajax.js",
+	"version": "1.0.0",
+	"homepage": "https://github.com/peckadesign/pd.ajax",
+	"authors": [
+		"PeckaDesign, s.r.o <support@peckadesign.cz>",
+		"Radek Šerý <radek.sery@peckadesign.cz>",
+		"Jiří Pudil <jiri.pudil@peckadesign.cz>",
+		"Vít Kutný <vit.kutny@peckadesign.cz>"
+	],
+	"main": "pd.ajax.js",
+	"license": "MIT",
+	"dependencies": {
+		"jquery": ">=1.7",
+		"nette-forms": "~2.2",
+		"nette.ajax.js": "~2.2"
+	}
+}
