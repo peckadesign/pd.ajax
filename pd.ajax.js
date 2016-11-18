@@ -124,4 +124,24 @@
 			});
 		}
 	});
+
+
+	// rozšíření extension snippets o nové funkce
+	var snippetsExt = $.nette.ext('snippets');
+
+	// najde a vrátí všechny snippety, které nemají zakázané cacheování
+	snippetsExt.findSnippets = function () {
+		var result = [];
+		$('[id^="snippet-"]').each(function () {
+			var $el = $(this);
+			if (! $el.is('[data-history-nocache]')) {
+				result.push({
+					id: $el.attr('id'),
+					html: $el.html()
+				});
+			}
+		});
+		return result;
+	};
+
 })(jQuery);
