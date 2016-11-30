@@ -113,7 +113,7 @@
 					history.replaceState($.extend(history.state || {}, {
 						title: document.title,
 						pdbox: pdbox,
-						ui: findSnippets()
+						ui: $.nette.ext('snippets').findSnippets()
 					}), document.title, location.href);
 				}
 			}
