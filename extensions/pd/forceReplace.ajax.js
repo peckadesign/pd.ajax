@@ -3,6 +3,10 @@
 	/**
 	 * @author Jiří Pudil
 	 * I did magic.
+	 *
+	 * Umožňuje přes AJAX appendovat nový obsah (tj. např. snippet s produkty a odkaz "načíst další produkty") a zároveň
+	 * v případě potřeby celý snippet nahradit novým obsahem (např. při zafiltrování). V případě, že nemáme donačítání
+	 * obsahu, není tohle extension relevantní.
 	 */
 	$.nette.pd.ext('forceReplace', {
 		start: function (xhr, settings) {

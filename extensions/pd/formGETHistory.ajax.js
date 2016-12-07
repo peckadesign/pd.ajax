@@ -13,8 +13,11 @@
 	 */
 	$.nette.pd.ext('formGetHistory', {
 		success: function (payload, status, xhr, settings) {
-			if (window.history && history.pushState && window.history.replaceState && !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/)) {
+			var historyExt;
+
+			if (historyExt = $.nette.ext('history')) {
 				var href = window.location.href;
+				var snippetsExt = $.nette.ext('snippets');
 
 				if ((i = href.search(/\?/)) != -1)
 					href = href.substring(0, i);
@@ -25,10 +28,9 @@
 					nette: true,
 					href: href,
 					title: document.title,
-					ui: this.ext('snippets', true).findSnippets()
+					ui: (snippetsExt && historyExt && historyExt.cache) ? snippetsExt.findSnippets() : null
 				}, document.title, href);
 			}
-
 		}
 	});
 

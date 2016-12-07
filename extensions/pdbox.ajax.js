@@ -8,13 +8,24 @@
 	 * s class thickbox) přidat class ajax, pak např. data-spinner=".pd-box-content" atd., další extension by měla být
 	 * kompatibilní :)
 	 *
-	 * @todo pokud otevřu TB, zavřu TB, zafiltruji, otevřu nový TB a pak v historii přejdu přímo na ten 1. otevřený (tj. přeskočím několik mezikroků), pak po zavření TB budu mít URL nekonzistentní vůči obsahu. Nevím, zda je to vůbec řešitelné, respektive jak snadno/těžko.
+	 * @todo Pokud otevřu TB, zavřu TB, zafiltruji, otevřu nový TB a pak v historii přejdu přímo na ten 1. otevřený (tj. přeskočím několik mezikroků), pak po zavření TB budu mít URL nekonzistentní vůči obsahu. Nevím, zda je to vůbec řešitelné, respektive jak snadno/těžko.
+	 *
+	 * @todo Nemělo by v lastState a original být též uloženo ui?
 	 */
+
+	var snippetsExt;
+	var historyExt;
+
 	$.nette.ext('pdbox', {
 		init: function () {
+			snippetsExt = $.nette.ext('snippets');
+			historyExt = $.nette.ext('history');
+
+			this.historySupported = !! historyExt;
+
 			if (this.historySupported) {
 				$(window).on('popstate.pdbox', $.proxy(function (e) {
-					var state = e.originalEvent.state || this.history.initialState;
+					var state = e.originalEvent.state || historyExt.initialState;
 					this.historyEnabled = true; // protože jde o popstate, jde o TB s historií (pokud je to TB, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
 					this.popstate = true;
 
@@ -113,15 +124,14 @@
 					history.replaceState($.extend(history.state || {}, {
 						title: document.title,
 						pdbox: pdbox,
-						ui: $.nette.ext('snippets').findSnippets()
+						ui: (historyExt && historyExt.cache && snippetsExt) ? snippetsExt.findSnippets() : null
 					}), document.title, location.href);
 				}
 			}
 		}
 	}, {
-		historySupported: window.history && history.pushState && window.history.replaceState && !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/),
+		historySupported: false, // nastavujeme v init
 		historyEnabled: false, // zabrání/povolí pushState po zavření okna TB; jdeme-li zpět (popstate), tak při zavření TB nechceme vkládat nový stav do historie, dále brání vložení stavu pro TB bez historie (např. obrázkový TB)
-		history: $.nette.ext('history'),
 		popstate: false,
 		pushOriginal: function () {
 			// fce pro vložení stavu do historie, volá se po zavření TB; nový stav vkládá pouze pokud má co vložit (tj. víme co je pod TB) a pokud nezavíráme TB tlačítkem zpět
