@@ -11,6 +11,22 @@
 	var extensions = {};
 	var contexts = {};
 
+
+	// Cleverer ajaxification
+	$.nette.ext('init', false);
+	$.nette.ext('init', {
+		load: function (rh) {
+			$(document).off('click.nette', this.linkSelector, rh).on('click.nette', this.linkSelector, rh);
+			$(document).off('submit.nette', this.formSelector, rh).on('submit.nette', this.formSelector, rh);
+			$(document).off('click.nette', this.buttonSelector, rh).on('click.nette', this.buttonSelector, rh);
+		}
+	}, {
+		linkSelector: 'a.ajax',
+		formSelector: 'form.ajax',
+		buttonSelector: 'input.ajax[type="submit"], form.ajax input[type="submit"], button.ajax[type="submit"], form.ajax button[type="submit"], input.ajax[type="image"], form.ajax input[type="image"]'
+	});
+
+	// Allows callin $.nette.pd.ext('foo') to get pd extension context (same as $.nette.ext('bar') for common extension)
 	$.nette.pd = {
 		ext: function (name, callbacks, context) {
 			if (callbacks === undefined) {
@@ -55,6 +71,7 @@
 
 		return true;
 	};
+
 
 	$.nette.ext('pd', {
 		init: function () {
