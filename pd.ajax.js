@@ -26,7 +26,7 @@
 		buttonSelector: 'input.ajax[type="submit"], form.ajax input[type="submit"], button.ajax[type="submit"], form.ajax button[type="submit"], input.ajax[type="image"], form.ajax input[type="image"]'
 	});
 
-	// Allows callin $.nette.pd.ext('foo') to get pd extension context (same as $.nette.ext('bar') for common extension)
+	// Allows calling $.nette.pd.ext('foo') to get pd extension context (same as $.nette.ext('bar') for common extension)
 	$.nette.pd = {
 		ext: function (name, callbacks, context) {
 			if (callbacks === undefined) {

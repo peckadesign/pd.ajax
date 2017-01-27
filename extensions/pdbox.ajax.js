@@ -26,16 +26,19 @@
 			if (this.historySupported) {
 				$(window).on('popstate.pdbox', $.proxy(function (e) {
 					var state = e.originalEvent.state || historyExt.initialState;
-					this.historyEnabled = true; // protože jde o popstate, jde o TB s historií (pokud je to TB, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
 					this.popstate = true;
 
 					// při popstate kontrolujeme, zda nový stav má nastavenou vlastnost pdbox, pokud ano, otevřeme jej (metoda open kontroluje, zda již otevřený není), vložíme obsah a spustíme událost load
 					if ('pdbox' in state && state.pdbox) {
+						this.historyEnabled = true; // protože jde o popstate, jde o TB s historií (pokud je to TB, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
+
 						this.box.open();
 						this.box.content(state.pdbox.content);
 						this.box.setOptions(state.pdbox.options);
 						this.box.dispatchEvent('load', {content: state.pdbox.content});
 					} else {
+						this.historyEnabled = false; // zavíráme pomocí tlačítka zpět/vpřed, tj. nechceme zapisovat do historie
+
 						// pokud pdbox není, zavřeme jej (metoda close opět kontroluje, zda je TB otevřený)
 						this.box.close();
 					}
@@ -87,6 +90,7 @@
 
 			// pokud success nastal po kliknutí na elementu s class thickbox, vyvoláme load událost, nastavíme vlastnosti TB a pokud je povolená historie, nahradíme stávající stav naším, kde přidáváme do state vlastnost pdbox
 			if (('nette' in settings && 'el' in settings.nette && settings.nette.el.is('.thickbox')) || settings.pdbox) {
+				// zpracování vráceného redirectu v rámci TB
 				if (payload.redirect) {
 					var options = {
 						url: payload.redirect,
@@ -100,12 +104,11 @@
 						options.spinnerQueue = settings.spinnerQueue.slice(0);
 						settings.spinnerQueue = [];
 					}
-
-					$.nette.ajax(options);
-
-					if (this.historySupported) {
+					if ($.inArray('history', settings.off) === -1 && this.historySupported) {
 						this.historyEnabled = true;
 					}
+
+					$.nette.ajax(options);
 
 					return;
 				}
