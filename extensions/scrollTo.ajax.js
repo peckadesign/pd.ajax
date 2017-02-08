@@ -17,15 +17,17 @@
 
 					$('.pd-box-window').stop().animate({
 						scrollTop: top
-					}, 400);
+					}, this.duration);
 				}
 				else {
 					$('html, body').stop().animate({
 						scrollTop: $(scrollToEl).offset().top
-					}, 400);
+					}, this.duration);
 				}
 			}
 		}
+	}, {
+		duration: 400
 	});
 
 })(jQuery);
