@@ -24,7 +24,7 @@
 
 			this.historySupported = !! historyExt;
 
-			this.ajaxified = initExt.linkSelect + ', ' + initExt.formSelector + ', ' + initExt.buttonSelector;
+			this.ajaxified = initExt.linkSelector + ', ' + initExt.formSelector + ', ' + initExt.buttonSelector;
 
 			if (this.historySupported) {
 				$(window).on('popstate.pdbox', $.proxy(function (e) {
