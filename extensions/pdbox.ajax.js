@@ -20,8 +20,11 @@
 		init: function () {
 			snippetsExt = $.nette.ext('snippets');
 			historyExt = $.nette.ext('history');
+			initExt = $.nette.ext('init');
 
 			this.historySupported = !! historyExt;
+
+			this.ajaxified = initExt.linkSelect + ', ' + initExt.formSelector + ', ' + initExt.buttonSelector;
 
 			if (this.historySupported) {
 				$(window).on('popstate.pdbox', $.proxy(function (e) {
@@ -113,7 +116,7 @@
 					return;
 				}
 
-				this.box.window.content.find('a.ajax').addClass('thickbox');
+				this.box.window.content.find(this.ajaxified).addClass('thickbox');
 				this.box.dispatchEvent('load', {content: payload});
 
 				if ($.inArray('history', settings.off) === -1 && this.historySupported) {
@@ -158,6 +161,7 @@
 				this.historyEnabled = false;
 			}
 		},
+		ajaxified: '', // selector všeho, co by mělo být odesíláno ajaxem
 		original: [], // zásobník stavů "pod TB" - po zavření TB musíme nastavit URL, title a stav do historie přes pushState
 		lastState: null,
 		box: null
