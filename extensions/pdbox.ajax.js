@@ -5,8 +5,8 @@
 	 * @author Jiří Pudil
 	 *
 	 * Extension pro ajaxový pdbox, včetně historie (volitelně). Pro použití stačí pro ovládací element (tj. ten
-	 * s class js-pdbox např.) přidat class ajax, pak např. data-no-spinner atd., další extension by měly
-	 * být kompatibilní :)
+	 * s class js-pdbox např.) přidat class ajax, pak např. data-no-spinner atd., další extension by měly být
+	 * kompatibilní :)
 	 *
 	 * @todo Pokud otevřu pdbox, zavřu pdbox, zafiltruji, otevřu nový pdbox a pak v historii přejdu přímo na ten 1. otevřený (tj. přeskočím několik mezikroků), pak po zavření pdbox budu mít URL nekonzistentní vůči obsahu. Nevím, zda je to vůbec řešitelné, respektive jak snadno/těžko.
 	 *
@@ -35,7 +35,8 @@
 					if ('pdbox' in state && state.pdbox) {
 						this.historyEnabled = true; // protože jde o popstate, jde o pdbox s historií (pokud je to pdbox, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
 
-						this.box.open();
+						// předáváme virtuální DOM element, který není skutečným zdrojem otevření, ale má totožné data atributy, o které nám jde
+						this.box.open($(state.pdbox.opener));
 						this.box.content(state.pdbox.content);
 						this.box.setOptions(state.pdbox.options);
 						this.box.dispatchEvent('load', {content: state.pdbox.content});
@@ -70,9 +71,14 @@
 							this.original.push(state);
 						}
 
-						// navážeme událost po zavření, preventivně ji předtím odstraňujeme, aby nebyla duplicitní
-						this.box.removeEventListener('afterClose');
-						this.box.addEventListener('afterClose', $.proxy(this.pushOriginal, this));
+						// navážeme událost po zavření
+						// aby nebyla duplicitní, odstraníme ji v případě, že byla dříve napojena
+						if (this.pushOriginalApplied) {
+							this.box.removeEventListener('afterClose', this.pushOriginalApplied);
+						}
+
+						this.pushOriginalApplied = $.proxy(this.pushOriginal, this);
+						this.box.addEventListener('afterClose', this.pushOriginalApplied);
 					}, this));
 				}
 			}
@@ -122,7 +128,11 @@
 				if ($.inArray('history', settings.off) === -1 && this.historySupported) {
 					this.historyEnabled = true;
 
+					// element, který otevřel pdbox; aby bylo možné serializovat, tak jako string a ne jako DOM element
+					var opener = ('nette' in settings && 'el' in settings.nette && settings.nette.el.is(this.pdboxSelector)) ? settings.nette.el[0].outerHTML : null;
+
 					pdbox = {
+						opener: opener,
 						content: this.box.content(),
 						options: this.box.options
 					};
