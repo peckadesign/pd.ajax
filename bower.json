@@ -12,6 +12,7 @@
 	"dependencies": {
 		"jquery": ">=1.7",
 		"nette-forms": "~2.2",
-		"nette.ajax.js": ">=2.0 <2.4"
+		"nette.ajax.js": ">=2.0 <2.4",
+		"jquery.pdbox": "peckadesign/jquery.pdbox#~1.1"
 	}
 }
