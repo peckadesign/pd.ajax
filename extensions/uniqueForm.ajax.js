@@ -27,7 +27,7 @@
 			}
 		}
 	}, {
-		timeout: 5000,
+		timeout: 60000,
 		buttonClassDisabled: null,
 		formSubmitHandler: function () {
 			return false;
