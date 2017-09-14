@@ -11,66 +11,75 @@
 	$.nette.ext('uniqueForm', {
 		init: function () {
 			var uniqueForm = this;
-			$(document).on('submit', 'form', function (event) {
-				var $form = $(this);
-				uniqueForm.formSubmitBeforeHandler.apply(uniqueForm, [$form]);
-				setTimeout(function () {
-					//disable je třeba nastavit opožděně, aby formulář odeslal v POST requestu i submit button
-					$form.find(uniqueForm.inputSubmitSelector).each(uniqueForm.inputSubmitBeforeHandler);
-				}, 0); //setTimeout() re-queues the new JavaScript at the end of the execution queue
-				$form.data('uniqueFormTimeout', setTimeout(function () {
-					uniqueForm.formSubmitAfterHandler.apply(uniqueForm, [$form]);
-					$form.find(uniqueForm.inputSubmitSelector).each(uniqueForm.inputSubmitAfterHandler)
-				}, uniqueForm.timeout));
+			$(document).on('submit', 'form', function () {
+				uniqueForm.formSubmitBeforeHandler.call(uniqueForm, this);
+				$(this).data('uniqueFormTimeout', setTimeout(uniqueForm.formSubmitAfterHandler.bind(uniqueForm, this), uniqueForm.timeout));
 			});
 		},
 		start: function (xhr, settings) {
 			if ('nette' in settings && 'form' in settings.nette && settings.nette.form) {
-				var $form = settings.nette.form;
-				this.formSubmitBeforeHandler.apply(this, [$form]);
-				$form.find(this.inputSubmitSelector).each(this.inputSubmitBeforeHandler);
+				this.formSubmitBeforeHandler.call(this, settings.nette.form);
 			}
 		},
 		complete: function (xhr, status, settings) {
 			if ('nette' in settings && 'form' in settings.nette && settings.nette.form) {
-				var $form = settings.nette.form;
-				this.formSubmitAfterHandler.apply(this, [$form]);
-				$form.find(this.inputSubmitSelector).each(this.inputSubmitAfterHandler)
+				this.formSubmitAfterHandler.call(this, settings.nette.form);
 			}
 		}
 	}, {
 		timeout: 5000,
+		buttonClassDisabled: null,
 		formSubmitHandler: function () {
 			return false;
 		},
-		formSubmitBeforeHandler: function ($form) {
+		formSubmitBeforeHandler: function (form) {
+			var uniqueForm = this;
+			var $form = $(form);
 			clearTimeout($form.data('uniqueFormTimeout'));
 			$form.removeData('uniqueFormTimeout')
-				.bind('submit', this.formSubmitHandler)
+				.bind('submit', uniqueForm.formSubmitHandler)
 			;
+			setTimeout(function () {
+				//disable je třeba nastavit opožděně, aby formulář odeslal v POST requestu i submit button
+				$form.find(uniqueForm.inputSubmitSelector).each(function () {
+					uniqueForm.inputSubmitBeforeHandler.call(uniqueForm, this);
+				});
+			}, 0); //setTimeout() re-queues the new JavaScript at the end of the execution queue
 		},
-		formSubmitAfterHandler: function ($form) {
+		formSubmitAfterHandler: function (form) {
+			var uniqueForm = this;
+			var $form = $(form);
 			clearTimeout($form.data('uniqueFormTimeout'));
 			$form.removeData('uniqueFormTimeout')
-				.unbind('submit', this.formSubmitHandler)
+				.unbind('submit', uniqueForm.formSubmitHandler)
 			;
+			$form.find(uniqueForm.inputSubmitSelector).each(function () {
+				uniqueForm.inputSubmitAfterHandler.call(uniqueForm, this);
+			});
 		},
 		inputSubmitSelector: 'input[type=submit], button[type=submit], input[type=image]',
-		inputSubmitBeforeHandler: function () {
-			var $this = $(this);
-			if (!$this.prop('disabled')) {
+		inputSubmitBeforeHandler: function (el) {
+			var $el = $(el);
+			if (!$el.prop('disabled')) {
 				//disable not disabled inputs
-				$this.data('uniqueFormDisabled', true);
-				$this.prop('disabled', true);
+				$el.data('uniqueFormDisabled', true);
+				$el.prop('disabled', true);
+				if (this.buttonClassDisabled) {
+					$el.addClass(this.buttonClassDisabled);
+				}
 			}
 		},
-		inputSubmitAfterHandler: function () {
-			var $this = $(this);
-			if ($this.data('uniqueFormDisabled')) {
+		inputSubmitAfterHandler: function (el) {
+			var $el = $(el);
+			if ($el.data('uniqueFormDisabled')) {
 				//enable inputs disabled by this extension
-				$this.prop('disabled', false);
-				$this.removeData('uniqueFormDisabled');
+				if (this.buttonClassDisabled) {
+					$el.removeClass(this.buttonClassDisabled);
+				}
+				$el.prop('disabled', false);
+				$el.removeData('uniqueFormDisabled');
 			}
 		}
 	});
 })(window.jQuery, window.document);
+
