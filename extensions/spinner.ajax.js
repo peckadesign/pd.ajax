@@ -13,27 +13,9 @@
 	 */
 	$.nette.ext('spinner', {
 		start: function (xhr, settings) {
-			var $placeholder = $();
+			var $placeholder = this.getPlaceholder(settings);
 			var spinner = this;
 			settings.spinnerQueue = settings.spinnerQueue || [];
-
-			if (settings.nette) {
-
-				var $el = settings.nette.el;
-				var $wrap = null;
-
-				if($el.is('[data-no-spinner]'))
-					return;
-
-				$placeholder = $($el.data('spinner'));
-
-				if ($placeholder.length == 0 && ($wrap = $el.closest('.ajax-wrap')).length)
-					if (($placeholder = $wrap.find('.ajax-spinner')).length == 0)
-						$placeholder = $wrap;
-
-			} else if (settings.spinner) {
-				$placeholder = $(settings.spinner);
-			}
 
 			if ($placeholder.length) {
 				$placeholder.each(function() {
@@ -41,7 +23,6 @@
 					$(this).append(settings.spinnerQueue[i-1]);
 				});
 			}
-
 		},
 		complete: function (xhr, status, settings) {
 			if (! ('forceRedirect' in xhr) && 'spinnerQueue' in settings) {
@@ -52,7 +33,37 @@
 			}
 		}
 	}, {
-		spinnerHtml: '<div class="ajax-overlay"></div><div class="ajax-loader"></div>'
+		spinnerHtml: '<div class="ajax-overlay"></div><div class="ajax-loader"></div>',
+		getPlaceholder: function(settings) {
+			var $placeholder = $();
+
+			if (settings.nette) {
+				var $el = settings.nette.el;
+				$placeholder = this.getElementPlaceholder($el);
+
+			} else if (settings.spinner) {
+				$placeholder = $(settings.spinner);
+			}
+
+			return $placeholder;
+		},
+		getElementPlaceholder: function($el) {
+			var $placeholder;
+			var $wrap = null;
+
+			if($el.is('[data-no-spinner]'))
+				return;
+
+			$placeholder = $($el.data('spinner'));
+
+			if ($placeholder.length === 0 && ($wrap = $el.closest('.ajax-wrap')).length) {
+				if (($placeholder = $wrap.find('.ajax-spinner')).length === 0) {
+					$placeholder = $wrap;
+				}
+			}
+
+			return $placeholder;
+		}
 	});
 
 })(jQuery);
