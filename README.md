@@ -4,7 +4,7 @@ Vlastní extensions pro nette.ajax
 ## Changelog
 
 ### 1.1.2
-- oprava #8 
+- oprava [#8](https://github.com/peckadesign/pd.ajax/issues/8) 
 - funkce pro získávání placeholderu pro spinner je nyní veřejná, tj. je možné ji použít i v jiném extension
 
 ### 1.1.1
