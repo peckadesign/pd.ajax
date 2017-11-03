@@ -40,11 +40,11 @@
 				.bind('submit', uniqueForm.formSubmitHandler)
 			;
 			setTimeout(function () {
-				//disable je třeba nastavit opožděně, aby formulář odeslal v POST requestu i submit button
+				// disabled je třeba nastavit opožděně, aby formulář odeslal v POST requestu i submit button
 				$form.find(uniqueForm.inputSubmitSelector).each(function () {
 					uniqueForm.inputSubmitBeforeHandler.call(uniqueForm, this);
 				});
-			}, 0); //setTimeout() re-queues the new JavaScript at the end of the execution queue
+			}, 0); // setTimeout() re-queues the new JavaScript at the end of the execution queue
 		},
 		formSubmitAfterHandler: function (form) {
 			var uniqueForm = this;
@@ -53,9 +53,13 @@
 			$form.removeData('uniqueFormTimeout')
 				.unbind('submit', uniqueForm.formSubmitHandler)
 			;
-			$form.find(uniqueForm.inputSubmitSelector).each(function () {
-				uniqueForm.inputSubmitAfterHandler.call(uniqueForm, this);
-			});
+
+			setTimeout(function () {
+				// protože disabled je přidáváno zpožděně, je potřeba jej zpožděně i odebírat, např. z důvodu možného abort requestu dříve, než byl disabled nastaven (pak by se inputSubmitAfterHandler proběhl dříve, než inputSubmitBeforeHandler)
+				$form.find(uniqueForm.inputSubmitSelector).each(function () {
+					uniqueForm.inputSubmitAfterHandler.call(uniqueForm, this);
+				});
+			}, 0); // setTimeout() re-queues the new JavaScript at the end of the execution queue
 		},
 		inputSubmitSelector: 'input[type=submit], button[type=submit], input[type=image]',
 		inputSubmitBeforeHandler: function (el) {
