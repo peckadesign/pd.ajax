@@ -11,7 +11,7 @@
 	 * @todo Nemělo by v lastState a original být též uloženo ui?
 	 */
 
-	// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
+		// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
 	var snippetsExt = $.nette.ext('snippets');
 	var historyExt = $.nette.ext('history');
 	var initExt = $.nette.ext('init');
@@ -47,15 +47,23 @@
 						this.pushOriginalApplied = $.proxy(this.pushOriginal, this);
 						this.box.addEventListener('afterClose', this.pushOriginalApplied);
 					}, this));
+
+					this.box.addEventListener('afterClose', $.proxy(function () {
+						if (this.xhr) {
+							this.xhr.abort();
+						}
+					}, this));
 				}
 			}
 		},
 		before: function (xhr, settings) {
 			xhr.setRequestHeader('Pd-Box-Opened', Number(this.box.isOpen));
-
-			this.box.addEventListener('afterClose', function () {
-				xhr.abort();
-			});
+		},
+		start: function (xhr) {
+			if (this.xhr) {
+				this.xhr.abort();
+			}
+			this.xhr = xhr;
 		},
 		success: function (payload, status, xhr, settings) {
 			this.popstate = false;
@@ -112,6 +120,9 @@
 					}), document.title, location.href);
 				}
 			}
+		},
+		complete: function () {
+			this.xhr = null;
 		}
 	}, {
 		pdboxSelector: '.js-pdbox',
@@ -144,7 +155,8 @@
 		ajaxified: '', // selector všeho, co by mělo být odesíláno ajaxem
 		original: [], // zásobník stavů "pod pdbox" - po zavření pdbox musíme nastavit URL, title a stav do historie přes pushState
 		lastState: null,
-		box: null
+		box: null,
+		xhr: null
 	});
 
 
