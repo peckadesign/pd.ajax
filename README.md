@@ -3,6 +3,9 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.1.4 draft
+- oprava [#7](https://github.com/peckadesign/pd.ajax/issues/7)
+
 ### 1.1.3
 - oprava `uniqueForm` extension, které v případě abort requestu za určitých okolností mohlo neoddělat `disabled` z tlačítek
 
