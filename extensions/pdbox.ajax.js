@@ -11,7 +11,7 @@
 	 * @todo Nemělo by v lastState a original být též uloženo ui?
 	 */
 
-		// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
+	// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
 	var snippetsExt = $.nette.ext('snippets');
 	var historyExt = $.nette.ext('history');
 	var initExt = $.nette.ext('init');

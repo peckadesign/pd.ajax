@@ -3,7 +3,8 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
-### 1.1.4 draft
+### 1.1.4
+- `uniqueForm` extension se nepoužije u neAJAXového formuláře v případě, že má nastaven atribut `target` na otevírání do nového okna ([#9](https://github.com/peckadesign/pd.ajax/issues/9))
 - oprava [#7](https://github.com/peckadesign/pd.ajax/issues/7)
 
 ### 1.1.3
