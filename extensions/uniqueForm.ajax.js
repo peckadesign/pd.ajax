@@ -12,6 +12,10 @@
 		init: function () {
 			var uniqueForm = this;
 			$(document).on('submit', 'form', function () {
+				if (this.target === '_blank' || (this.target === '_parent' && window.parent !== window)) {
+					return true;
+				}
+
 				uniqueForm.formSubmitBeforeHandler.call(uniqueForm, this);
 				$(this).data('uniqueFormTimeout', setTimeout(uniqueForm.formSubmitAfterHandler.bind(uniqueForm, this), uniqueForm.timeout));
 			});
