@@ -5,11 +5,12 @@
 	 *
 	 * Spinner
 	 *  - přidává překrytí a spinner:
-	 *    0. spinner lze zakázat pomocí data-no-spinner - pak se nepokračuje vůbec dál a hotovo.
-	 *    1. pokud existuje data-spinner, tak vloží ajax-loader a ajax-overlay do prvku odpovídajícímu selektoru data atributu
-	 *    2. pokud není data-spinner, najde se nejbližší ajax-wrap:
-	 *       a. pokud uvnitř existuje ajax-spinner, vloží se ajax-loader a ajax-overlay do něj
-	 *       b. když ne, vloží se přímo na konec ajax-wrap
+	 *    0. Spinner lze zakázat pomocí data-no-spinner - pak se nepokračuje vůbec dál a hotovo. Druhá (lepší) možnost
+	 *       vypnutí je pomocí data-ajax-off="spinner".
+	 *    1. Pokud existuje data-spinner, tak vloží ajax-loader a ajax-overlay do prvku odpovídajícímu selektoru data atributu.
+	 *    2. Pokud není data-spinner, najde se nejbližší ajax-wrap:
+	 *       a. Pokud uvnitř existuje ajax-spinner, vloží se ajax-loader a ajax-overlay do něj.
+	 *       b. Když ne, vloží se přímo na konec ajax-wrap.
 	 */
 	$.nette.ext('spinner', {
 		start: function (xhr, settings) {
@@ -48,11 +49,11 @@
 			return $placeholder;
 		},
 		getElementPlaceholder: function($el) {
-			var $placeholder;
+			var $placeholder = $();
 			var $wrap = null;
 
 			if($el.is('[data-no-spinner]'))
-				return;
+				return $placeholder;
 
 			$placeholder = $($el.data('spinner'));
 

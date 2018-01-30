@@ -2,7 +2,7 @@
 	"name": "pd.ajax",
 	"title": "pd.ajax",
 	"description": "Collection of nette ajax extensions, including `pd` for creating disabled-by-deafult extensions",
-	"version": "1.1.0",
+	"version": "1.1.5",
 	"author": "PeckaDesign, s.r.o <support@peckadesign.cz>",
 	"contributors": [
 		"Radek Šerý <radek.sery@peckadesign.cz>",
