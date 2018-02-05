@@ -30,10 +30,16 @@
 			// AJAXové formuláře se sem nedostanou, protože nette ajax volá e.stopPropagation() nad submit event
 			$(document).on('submit', 'form', function (e) {
 				if (this['nette-submittedBy']) {
+					var $btn = $(this['nette-submittedBy']);
+
+					if ($btn.is('[data-no-spinner], [data-no-btn-spinner]')) {
+						return;
+					}
+
 					var $form = $(this);
 					var $spinner = $(ext.spinnerHtml);
 
-					$(this['nette-submittedBy']).append($spinner);
+					$btn.append($spinner);
 
 					$form.data('btnSpinnerTimeout', setTimeout(function() {
 						$spinner.remove();

@@ -3,6 +3,9 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.1.6 draft
+- extension `btnSpinner` je možno vypnout i ne ne-AJAXových formulářích pomocí data atributu `data-no-spinner` nebo `data-no-btn-spinner`
+
 ### 1.1.5
 - oprava [#12](https://github.com/peckadesign/pd.ajax/issues/12)
 
