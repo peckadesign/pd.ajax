@@ -3,7 +3,9 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
-### 1.1.6 draft
+### 1.2.0
+- extension `pdbox` upraveno pro kompatibilitu s `jquery.pdbox` verze `~1.2.0` - tato verze je nyní vyžadována
+- oprava JS chyby v extension `pdbox` v případě, kdy byl nějaký AJAXový požadavek vyslán dříve, než byl předán parametr `box`   
 - extension `btnSpinner` je možno vypnout i ne ne-AJAXových formulářích pomocí data atributu `data-no-spinner` nebo `data-no-btn-spinner`
 
 ### 1.1.5

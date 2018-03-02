@@ -11,7 +11,7 @@
 	 * @todo Nemělo by v lastState a original být též uloženo ui?
 	 */
 
-	// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
+		// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
 	var snippetsExt = $.nette.ext('snippets');
 	var historyExt = $.nette.ext('history');
 	var initExt = $.nette.ext('init');
@@ -57,7 +57,7 @@
 			}
 		},
 		before: function (xhr, settings) {
-			xhr.setRequestHeader('Pd-Box-Opened', Number(this.box.isOpen));
+			xhr.setRequestHeader('Pd-Box-Opened', Number(this.box && this.box.isOpen));
 		},
 		start: function (xhr) {
 			if (this.xhr) {
@@ -98,17 +98,17 @@
 					return;
 				}
 
+				var $opener = ('nette' in settings && 'el' in settings.nette && settings.nette.el) ? settings.nette.el : null;
+
 				this.box.window.content.find(this.ajaxified).addClass(this.pdboxAutoClass); // .slice(1) odstraní z názvu class
-				this.box.dispatchEvent('load', {content: payload});
+				this.box.dispatchEvent('load', {element: $opener, content: payload});
 
 				if ($.inArray('history', settings.off) === -1 && this.historySupported) {
 					this.historyEnabled = true;
 
 					// element, který otevřel pdbox; aby bylo možné serializovat, tak jako string a ne jako DOM element
-					var opener = ('nette' in settings && 'el' in settings.nette && settings.nette.el.is(this.pdboxSelector)) ? settings.nette.el[0].outerHTML : null;
-
 					var pdbox = {
-						opener: opener,
+						opener: $opener ? $opener[0].outerHTML : null,
 						content: this.box.content(),
 						options: this.box.options
 					};
@@ -173,10 +173,12 @@
 				this.historyEnabled = true; // protože jde o popstate, jde o pdbox s historií (pokud je to pdbox, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
 
 				// předáváme virtuální DOM element, který není skutečným zdrojem otevření, ale má totožné data atributy, o které nám jde
-				this.box.open($(state.pdbox.opener));
+				var $opener = $(state.pdbox.opener);
+
+				this.box.open($opener);
 				this.box.content(state.pdbox.content);
-				this.box.setOptions(state.pdbox.options);
-				this.box.dispatchEvent('load', {content: state.pdbox.content});
+				this.box.setOptions(state.pdbox.options, true);
+				this.box.dispatchEvent('load', {element: $opener, content: state.pdbox.content});
 			} else {
 				this.historyEnabled = false; // zavíráme pomocí tlačítka zpět/vpřed, tj. nechceme zapisovat do historie
 
