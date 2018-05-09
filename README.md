@@ -3,6 +3,18 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.2.2
+- extension `scrollTo` je přepsané pro lepší použití uvnitř otevřeného pdboxu a je více modifikovatelné:
+  - přidán nastavení pro scroll offset (výchozí hodnota je 0):
+    - globálně: `$.nette.ext('scrollTo').offset = 30;`
+    - ad-hoc: `<a href="#" class="ajax" data-scroll-to="#target" data-scroll-to-offset="30">...</a>`
+  - přidána možnost nastavit, kdy dochází ke scrollu (podpora `before` a `success`, výchozí je `before`)
+    - globálně: `$.nette.ext('scrollTo').defaultEvent = 'success';`
+    - ad-hoc `<a href="#" class="ajax" data-scroll-to="#target" data-scroll-to-event="success"></a>`
+
+### 1.2.1
+- update závislostí
+
 ### 1.2.0
 - extension `pdbox` upraveno pro kompatibilitu s `jquery.pdbox` verze `~1.2.0` - tato verze je nyní vyžadována
 - oprava JS chyby v extension `pdbox` v případě, kdy byl nějaký AJAXový požadavek vyslán dříve, než byl předán parametr `box`   

@@ -2,32 +2,56 @@
 
 	/**
 	 * @author Radek Šerý
-	 * Usage: <a href="#" class="ajax" data-scroll-to="#target"></a>
-	 * @todo Předělat při vhodné příležitosti hledání pdboxu na něco jako $.nette.ext('pdbox').box
+	 * Usage:
+	 *   <a href="#" class="ajax" data-scroll-to="#target"></a>
+	 *   <a href="#" class="ajax" data-scroll-to="#target" data-scroll-to-offset="30"></a>
+	 *   <a href="#" class="ajax" data-scroll-to="#target" data-scroll-to-event="success"></a>
 	 */
 	$.nette.ext('scrollTo', {
-		before: function (xhr, settings) {
-			if ((scrollToEl = (settings.nette !== undefined) ? settings.nette.el.data('scrollTo') : false) && $(scrollToEl).length) {
-				// v pdboxu nelze scrollovat s documentem (zbytečné), ale je potřeba posunout samotný scroll pd-box-window
-				if ($('body').hasClass('pd-box-open')) {
-					var top = 0;
-					var $pdbox = $(scrollToEl).closest('.pd-box-window');
-					if ($pdbox.length) // offset elementu je pozice vůči viewportu a ten je fixovaný na okno -> proto k aktuální pozici scrollu pd-box-window přičteme offset elementu
-						top = $pdbox.scrollTop() + $(scrollToEl).offset().top - $pdbox.offset().top;
+		init: function () {
+			var pdboxExt = $.nette.ext('pdbox');
 
-					$('.pd-box-window').stop().animate({
+			if (pdboxExt) {
+				this.pdbox = pdboxExt.box;
+			}
+		},
+		before: function (xhr, settings) {
+			this.checkScroll(settings, 'before');
+		},
+		success: function (payload, status, xhr, settings) {
+			this.checkScroll(settings, 'success');
+		}
+	}, {
+		offset: 0,
+		duration: 400,
+		defaultEvent: 'before',
+		checkScroll: function (settings, event) {
+			var scrollEvent = $(settings.nette.el).data('scrollToEvent');
+			if (scrollEvent === event || (! scrollEvent && event === this.defaultEvent)) {
+				this.doScroll(settings);
+			}
+		},
+		doScroll: function (settings) {
+			if ((scrollToEl = (settings.nette !== undefined) ? settings.nette.el.data('scrollTo') : false) && $(scrollToEl).length) {
+				var ext = this;
+				var offset = $(settings.nette.el).data('scrollToOffset') || ext.offset;
+
+				// v pdboxu nelze scrollovat s documentem (zbytečné), ale je potřeba posunout samotný scroll pd-box-window
+				if (this.pdbox && this.pdbox.isOpen) {
+					var $pdbox = this.pdbox.window.elem;
+					var top = $pdbox.scrollTop() + $(scrollToEl).offset().top - $pdbox.offset().top - offset;
+
+					$pdbox.stop().animate({
 						scrollTop: top
 					}, this.duration);
 				}
 				else {
 					$('html, body').stop().animate({
-						scrollTop: $(scrollToEl).offset().top
+						scrollTop: $(scrollToEl).offset().top - offset
 					}, this.duration);
 				}
 			}
 		}
-	}, {
-		duration: 400
 	});
 
 })(jQuery);
