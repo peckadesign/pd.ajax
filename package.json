@@ -2,7 +2,7 @@
 	"name": "pd.ajax",
 	"title": "pd.ajax",
 	"description": "Collection of nette ajax extensions, including `pd` for creating disabled-by-deafult extensions",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"author": "PeckaDesign, s.r.o <support@peckadesign.cz>",
 	"contributors": [
 		"Radek Šerý <radek.sery@peckadesign.cz>",
@@ -23,9 +23,9 @@
 	"license": "MIT",
 	"homepage": "https://github.com/peckadesign/pd.ajax",
 	"dependencies": {
-		"jquery": "^1.7",
+		"jquery": ">=1.12",
 		"nette.ajax.js": ">=2.0 <2.4",
-		"jquery.pdbox": "git+https://github.com/peckadesign/jquery.pdbox.git#semver:~1.2"
+		"jquery.pdbox": "git+https://github.com/peckadesign/jquery.pdbox.git#semver:^1.2.0"
 	},
 	"devDependencies": {}
 }
