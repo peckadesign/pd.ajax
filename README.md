@@ -3,6 +3,11 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.2.3
+- oprava chyby `scrollTo` extension, kdy:
+  - nebylo možno nastavit přes data atribut offset na 0
+  - došlo k JS chybě, pokud nebyl `settings.nette.el`
+  
 ### 1.2.2
 - extension `scrollTo` je přepsané pro lepší použití uvnitř otevřeného pdboxu a je více modifikovatelné:
   - přidán nastavení pro scroll offset (výchozí hodnota je 0):

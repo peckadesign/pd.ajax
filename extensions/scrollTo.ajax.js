@@ -26,20 +26,25 @@
 		duration: 400,
 		defaultEvent: 'before',
 		checkScroll: function (settings, event) {
-			var scrollEvent = $(settings.nette.el).data('scrollToEvent');
-			if (scrollEvent === event || (! scrollEvent && event === this.defaultEvent)) {
-				this.doScroll(settings);
+			if ('nette' in settings && settings.nette.el) {
+				var $clickedEl = $(settings.nette.el);
+				var scrollEvent = $clickedEl.data('scrollToEvent');
+
+				if (scrollEvent === event || (! scrollEvent && event === this.defaultEvent)) {
+					this.doScroll(settings, $clickedEl);
+				}
 			}
 		},
-		doScroll: function (settings) {
-			if ((scrollToEl = (settings.nette !== undefined) ? settings.nette.el.data('scrollTo') : false) && $(scrollToEl).length) {
-				var ext = this;
-				var offset = $(settings.nette.el).data('scrollToOffset') || ext.offset;
+		doScroll: function (settings, $clickedEl) {
+			var dataOffset = $clickedEl.data('scrollToOffset');
+			var offset = (dataOffset !== undefined) ? dataOffset : this.offset;
+			var $scrollToEl = $( $clickedEl.data('scrollTo') );
 
+			if ($scrollToEl.length) {
 				// v pdboxu nelze scrollovat s documentem (zbytečné), ale je potřeba posunout samotný scroll pd-box-window
 				if (this.pdbox && this.pdbox.isOpen) {
 					var $pdbox = this.pdbox.window.elem;
-					var top = $pdbox.scrollTop() + $(scrollToEl).offset().top - $pdbox.offset().top - offset;
+					var top = $pdbox.scrollTop() + $scrollToEl.offset().top - $pdbox.offset().top - offset;
 
 					$pdbox.stop().animate({
 						scrollTop: top
@@ -47,7 +52,7 @@
 				}
 				else {
 					$('html, body').stop().animate({
-						scrollTop: $(scrollToEl).offset().top - offset
+						scrollTop: $scrollToEl.offset().top - offset
 					}, this.duration);
 				}
 			}
