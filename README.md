@@ -3,6 +3,10 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.3.0
+- Extension `pdbox` nyní zachovává vypnutí historie pro automaticky zAJAXované odkazy a formuláře uvnitř otevřeného pdboxu. Tj. pokud je historie vypnutá při otevření pdboxu, zůstane i v rámci tohoto pdboxu vypnutá.
+- Extension `btnSpinner` je možné použít nejen pro `<button>`, ale pro libovolný element spouštějící AJAXový požadavek (vzhledem k tomu, jak extension funguje, nejde použít např. pro `<input>`, protože do něj nelze vložit html kód).    
+
 ### 1.2.3
 - oprava chyby `scrollTo` extension, kdy:
   - nebylo možno nastavit přes data atribut offset na 0

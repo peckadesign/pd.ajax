@@ -49,9 +49,9 @@
 			});
 		},
 		start: function (xhr, settings) {
-			if ('nette' in settings && settings.nette.form && settings.nette.isSubmit) {
+			if ('nette' in settings && settings.nette.el && settings.nette.el.length) {
 				settings.$btnSpinner = $(this.spinnerHtml);
-				$(settings.nette.ui).append(settings.$btnSpinner);
+				settings.nette.el.append(settings.$btnSpinner);
 			}
 		},
 		complete: function (xhr, status, settings) {

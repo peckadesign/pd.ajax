@@ -11,7 +11,7 @@
 	 * @todo Nemělo by v lastState a original být též uloženo ui?
 	 */
 
-		// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
+	// init a snippets jsou definovány v nette.ajax.js a history v history.nette.ajax.js, tj. vždy jsou v tuto chvíli dostupné (soubory musí být před pd.ajax soubory)
 	var snippetsExt = $.nette.ext('snippets');
 	var historyExt = $.nette.ext('history');
 	var initExt = $.nette.ext('init');
@@ -75,6 +75,9 @@
 
 			// pokud success nastal po kliknutí na elementu s class this.pdboxSelector, vyvoláme load událost, nastavíme vlastnosti pdbox a pokud je povolená historie, nahradíme stávající stav naším, kde přidáváme do state vlastnost pdbox
 			if (('nette' in settings && 'el' in settings.nette && settings.nette.el.is(this.pdboxSelector)) || settings.pdbox) {
+				// je pro současný request povolená historie?
+				var requestHistory = ($.inArray('history', settings.off) === -1 && this.historySupported);
+
 				// zpracování vráceného redirectu v rámci pdbox
 				if (payload.redirect) {
 					var options = {
@@ -82,15 +85,14 @@
 						pdbox: true
 					};
 
-					if ($.inArray('history', settings.off) !== -1 || !this.historySupported) {
+					if (! requestHistory) {
 						options.off = ['history'];
+					} else {
+						this.historyEnabled = true;
 					}
 					if ('spinnerQueue' in settings) {
 						options.spinnerQueue = settings.spinnerQueue.slice(0);
 						settings.spinnerQueue = [];
-					}
-					if ($.inArray('history', settings.off) === -1 && this.historySupported) {
-						this.historyEnabled = true;
 					}
 
 					$.nette.ajax(options);
@@ -100,10 +102,24 @@
 
 				var $opener = ('nette' in settings && 'el' in settings.nette && settings.nette.el) ? settings.nette.el : null;
 
-				this.box.window.content.find(this.ajaxified).addClass(this.pdboxAutoClass); // .slice(1) odstraní z názvu class
-				this.box.dispatchEvent('load', {element: $opener, content: payload});
+				var $ajaxified = this.box.window.content.find(this.ajaxified);
+				$ajaxified.addClass(this.pdboxAutoClass);
 
-				if ($.inArray('history', settings.off) === -1 && this.historySupported) {
+				// Pokud není historie při otevírání, vypneme ji i pro automaticky zAJAXované odkazy a formuláře
+				if (! requestHistory) {
+					$ajaxified.each(function() {
+						var off = $(this).attr('data-ajax-off') || '';
+
+						if ((' ' + off + ' ').indexOf(' history ') === -1) {
+							off += (off ? ' ' : '') + 'history';
+
+							$(this).attr('data-ajax-off', off);
+						}
+					});
+				}
+
+				// Pokud je historie, upravíme nový stav přidáním 'pdbox' pole
+				if (requestHistory) {
 					this.historyEnabled = true;
 
 					// element, který otevřel pdbox; aby bylo možné serializovat, tak jako string a ne jako DOM element
@@ -119,6 +135,8 @@
 						ui: (historyExt && historyExt.cache && snippetsExt) ? snippetsExt.findSnippets() : null
 					}), document.title, location.href);
 				}
+
+				this.box.dispatchEvent('load', {element: $opener, content: payload});
 			}
 		},
 		complete: function () {
