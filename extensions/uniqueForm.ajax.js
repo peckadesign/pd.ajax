@@ -26,7 +26,7 @@
 			}
 		},
 		complete: function (xhr, status, settings) {
-			if ('nette' in settings && 'form' in settings.nette && settings.nette.form) {
+			if (! ('forceRedirect' in xhr) && 'nette' in settings && 'form' in settings.nette && settings.nette.form) {
 				this.formSubmitAfterHandler.call(this, settings.nette.form);
 			}
 		}
