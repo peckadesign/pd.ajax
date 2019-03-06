@@ -3,6 +3,11 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.4.0 draft
+- U pdboxu je možné nastavit způsob fungování historie po zavření. Výchozí je, že po zavření přejde prohlížeč zpět do stavu před otevřením a v historii prohlížeče je pdbox možno otevřít tlačítkem vpřed. Pomocí `data-pdbox-history="forwards"` je možné nastavit, že při zavření se vytvoří nový stav do historie, tj. tlačítko zpět v prohlížeči otevře znovu tento pdbox.
+  
+  :warning: **BC break:** původní výchozí chování bylo to, které je nyní volitelné.
+
 ### 1.3.1
 - Extension `uniqueForm` nechává tlačítka disabled, pokud v odpovědi přišel `forceRedirect`. V takovém případě není žádoucí odebrat `disabled`, nicméně běží dál 60s limit.
 
@@ -30,7 +35,7 @@ Vlastní extensions pro nette.ajax
 ### 1.2.0
 - extension `pdbox` upraveno pro kompatibilitu s `jquery.pdbox` verze `~1.2.0` - tato verze je nyní vyžadována
 - oprava JS chyby v extension `pdbox` v případě, kdy byl nějaký AJAXový požadavek vyslán dříve, než byl předán parametr `box`   
-- extension `btnSpinner` je možno vypnout i ne ne-AJAXových formulářích pomocí data atributu `data-no-spinner` nebo `data-no-btn-spinner`
+- extension `btnSpinner` je možno vypnout i na ne-AJAXových formulářích pomocí data atributu `data-no-spinner` nebo `data-no-btn-spinner`
 
 ### 1.1.5
 - oprava [#12](https://github.com/peckadesign/pd.ajax/issues/12)
