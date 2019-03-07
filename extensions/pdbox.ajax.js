@@ -125,12 +125,22 @@
 			}
 		},
 		success: function (payload, status, xhr, settings) {
+			var $ajaxified = null;
+
 			this.popstate = false;
 			this.lastState = {
 				location: location.href,
 				state: history.state,
 				title: document.title
 			};
+
+
+			// navázání autoclass; při popstate není splněna podmínka isPdboxRequest, proto kontrolujeme pouze zda je pdbox otevřený (a není redirect)
+			if (! payload.redirect && this.box && this.box.isOpen) {
+				$ajaxified = this.box.window.content.find(this.ajaxified);
+				$ajaxified.addClass(this.pdboxAutoClass);
+			}
+
 
 			// pokud success nastal po kliknutí na elementu s class this.pdboxSelector, vyvoláme load událost, nastavíme vlastnosti pdbox a pokud je povolená historie, nahradíme stávající stav naším, kde přidáváme do state vlastnost pdbox
 			if (isPdboxRequest(this, settings)) {
@@ -146,11 +156,10 @@
 
 				var $opener = ('nette' in settings && 'el' in settings.nette && settings.nette.el) ? settings.nette.el : null;
 
-				var $ajaxified = this.box.window.content.find(this.ajaxified);
-				$ajaxified.addClass(this.pdboxAutoClass);
 
 				// Pokud není historie při otevírání, vypneme ji i pro automaticky zAJAXované odkazy a formuláře
 				if (! requestHistory) {
+					$ajaxified = $ajaxified || this.box.window.content.find(this.ajaxified);
 					$ajaxified.each(function() {
 						var off = $(this).attr('data-ajax-off') || '';
 
