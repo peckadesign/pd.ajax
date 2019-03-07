@@ -5,8 +5,14 @@ Vlastní extensions pro nette.ajax
 
 ### 1.4.0 draft
 - U pdboxu je možné nastavit způsob fungování historie po zavření. Výchozí je, že po zavření přejde prohlížeč zpět do stavu před otevřením a v historii prohlížeče je pdbox možno otevřít tlačítkem vpřed. Pomocí `data-pdbox-history="forwards"` je možné nastavit, že při zavření se vytvoří nový stav do historie, tj. tlačítko zpět v prohlížeči otevře znovu tento pdbox.
-  
-  :warning: **BC break:** původní výchozí chování bylo to, které je nyní volitelné.
+- V jednotlivých extension je v `settings.pd` dostupné pole pro request zapnutých pd extension. 
+- Do extension se neukládá každý `xhr`, ale pouze ty, které opravdu souvisí s `pdboxem`. Stejně tak k rušení dojde pouze v případě, že oba requesty (probíhající i nový) souvisí s `pdboxem`. Opravuje #7.
+- Přesunutí automatického přidávání class `js-pdbox` (obecně dle nastavení `autoclass` u extension) tak, aby i při `popstate` došlo k nastavení class uvnitř pdboxu, opravuje #15.
+
+
+- **Nové extension:** Přidáno extension `replaceState` pro zachování změny url bez vytváření nových stavů. Toto extension je možné použít obecně vždy, když chceme mít aktuální url, ale v historii nechceme vytvářet nový stav. Například přepínání barev produktů nebo formuláře v pdboxu.
+
+:warning: **BC break:** původní výchozí chování historie pdboxu bylo to, které je nyní volitelné, tj. vytváření nového stavu po zavření. Pro zachování tohoto chování je potřeba doplnit zmíněný data atribut `data-pdbox-history="forwards"`.
 
 ### 1.3.1
 - Extension `uniqueForm` nechává tlačítka disabled, pokud v odpovědi přišel `forceRedirect`. V takovém případě není žádoucí odebrat `disabled`, nicméně běží dál 60s limit.
