@@ -66,10 +66,10 @@
 			if (! settings.nette.isForm && settings.nette.form && settings.nette.form.attr('data-ajax-pd')) {
 				ext = ((ext === '') ? '' : ext + ' ') + settings.nette.form.attr('data-ajax-pd');
 			}
-			return ext === '' || ext.split(' ');
+			return ext === '' ? [] : ext.split(' ');
 		}
 
-		return true;
+		return [];
 	};
 
 
@@ -89,53 +89,51 @@
 			});
 		},
 		prepare: function (settings) {
-			var on = getEnabledExtensions(settings);
+			settings.pd = getEnabledExtensions(settings);
+
 			$.each(extensions, function (name, ext) {
-				if (ext['prepare'] && $.inArray(name, on) !== -1) {
+				if (ext['prepare'] && settings.pd.indexOf(name) !== -1) {
 					ext.prepare(settings);
 				}
 			});
 		},
 		before: function (xhr, settings) {
-			var on = getEnabledExtensions(settings);
 			var abort = false;
+
 			$.each(extensions, function (name, ext) {
-				if (ext['before'] && $.inArray(name, on) !== -1) {
+				if (ext['before'] && settings.pd.indexOf(name) !== -1) {
 					if (ext.before(xhr, settings) === false) {
 						abort = true;
 					}
 				}
 			});
+
 			return !abort;
 		},
 		start: function (xhr, settings) {
-			var on = getEnabledExtensions(settings);
 			$.each(extensions, function (name, ext) {
-				if (ext['start'] && $.inArray(name, on) !== -1) {
+				if (ext['start'] && settings.pd.indexOf(name) !== -1) {
 					ext.start(xhr, settings);
 				}
 			});
 		},
 		success: function (payload, status, xhr, settings) {
-			var on = getEnabledExtensions(settings);
 			$.each(extensions, function (name, ext) {
-				if (ext['success'] && $.inArray(name, on) !== -1) {
+				if (ext['success'] && settings.pd.indexOf(name) !== -1) {
 					ext.success(payload, status, xhr, settings);
 				}
 			});
 		},
 		complete: function (xhr, status, settings) {
-			var on = getEnabledExtensions(settings);
 			$.each(extensions, function (name, ext) {
-				if (ext['complete'] && $.inArray(name, on) !== -1) {
+				if (ext['complete'] && settings.pd.indexOf(name) !== -1) {
 					ext.complete(xhr, status, settings);
 				}
 			});
 		},
 		error: function (xhr, status, error, settings) {
-			var on = getEnabledExtensions(settings);
 			$.each(extensions, function (i, ext) {
-				if (ext['error'] && $.inArray(name, on) !== -1) {
+				if (ext['error'] && settings.pd.indexOf(name) !== -1) {
 					ext.error(xhr, status, error, settings);
 				}
 			});

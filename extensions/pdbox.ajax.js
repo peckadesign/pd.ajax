@@ -41,14 +41,15 @@
 	var handleRedirect = function(ext, payload, settings, requestHistory) {
 		var options = {
 			url: payload.redirect,
+			off: settings.off,
+			pd: settings.pd,
 			pdbox: true
 		};
 
-		if (! requestHistory) {
-			options.off = ['history'];
-		} else {
+		if (requestHistory) {
 			ext.historyEnabled = true;
 		}
+
 		if ('spinnerQueue' in settings) {
 			options.spinnerQueue = settings.spinnerQueue.slice(0);
 			settings.spinnerQueue = [];
@@ -60,6 +61,14 @@
 
 	var isPdboxRequest = function(ext, settings) {
 		return ('nette' in settings && 'el' in settings.nette && settings.nette.el.is(ext.pdboxSelector)) || settings.pdbox;
+	};
+
+
+	var isRequestHistory = function(ext, settings) {
+		var isHistoryOn = ! settings.off || settings.off.indexOf('history') === -1;
+		var isReplaceStateOn = settings.pd && settings.pd.indexOf('replaceState') !== -1;
+
+		return historySupported && (isHistoryOn || isReplaceStateOn);
 	};
 
 
@@ -81,8 +90,7 @@
 						if (mode === PDBOX_HISTORY_FORWARDS) {
 							if (this.popstate) {
 								this.original.push(this.lastState);
-							}
-							else {
+							} else {
 								var state = {
 									location: location.href,
 									state: history.state,
@@ -91,18 +99,9 @@
 								this.original.push(state);
 							}
 						}
-
-						// navážeme událost po zavření
-						// aby nebyla duplicitní, odstraníme ji v případě, že byla dříve napojena
-						if (this.afterCloseHandlerApplied) {
-							this.box.removeEventListener('afterClose', this.afterCloseHandlerApplied);
-						}
-
-						this.afterCloseHandlerApplied = this.afterCloseHandler.bind(this);
-						this.box.addEventListener('afterClose', this.afterCloseHandlerApplied);
-
 					}).bind(this));
 
+					this.box.addEventListener('afterClose', this.afterCloseHandler.bind(this));
 					this.box.addEventListener('afterClose', (function () {
 						if (this.xhr) {
 							this.xhr.abort();
@@ -136,7 +135,7 @@
 			// pokud success nastal po kliknutí na elementu s class this.pdboxSelector, vyvoláme load událost, nastavíme vlastnosti pdbox a pokud je povolená historie, nahradíme stávající stav naším, kde přidáváme do state vlastnost pdbox
 			if (isPdboxRequest(this, settings)) {
 				// je pro současný request povolená historie?
-				var requestHistory = (! settings.off || settings.off.indexOf('history') === -1) && historySupported;
+				var requestHistory = isRequestHistory(pdboxExt, settings);
 
 				// zpracování vráceného redirectu v rámci pdbox
 				if (payload.redirect) {
@@ -236,12 +235,12 @@
 	// "náš" popstate potřebujeme navázat před popstate.nette z history.nette.ajax.js, aby bylo možno v before callbacku
 	// správně detekovat, zda je pdbox otevřený, proto je inicializace mimo init callback rovnou po definici extension
 	if (historySupported) {
-		var ext = $.nette.ext('pdbox');
+		var pdboxExt = $.nette.ext('pdbox');
 		var popstateHandler = function (e) {
 			var state = e.originalEvent.state || historyExt.initialState;
 			var isPdboxState = 'pdbox' in state && state.pdbox;
 
-			ext.popstate = true;
+			pdboxExt.popstate = true;
 
 			// Nevíme, o kolik stavů jít zpět, proto postupně jdeme po jednom, dokud se nedostaneme ke stavu před
 			// pdboxem (tj. isPdboxState bude false).
@@ -259,25 +258,25 @@
 
 			// při popstate kontrolujeme, zda nový stav má nastavenou vlastnost pdbox, pokud ano, otevřeme jej (metoda open kontroluje, zda již otevřený není), vložíme obsah a spustíme událost load
 			if (isPdboxState) {
-				ext.historyEnabled = true; // protože jde o popstate, jde o pdbox s historií (pokud je to pdbox, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
+				pdboxExt.historyEnabled = true; // protože jde o popstate, jde o pdbox s historií (pokud je to pdbox, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
 
 				// předáváme virtuální DOM element, který není skutečným zdrojem otevření, ale má totožné data atributy, o které nám jde
 				var $opener = $(state.pdbox.opener);
 
-				ext.box.open($opener);
-				ext.box.content(state.pdbox.content);
-				ext.box.setOptions(state.pdbox.options, true);
-				ext.box.dispatchEvent('load', {element: $opener, content: state.pdbox.content});
+				pdboxExt.box.open($opener);
+				pdboxExt.box.content(state.pdbox.content);
+				pdboxExt.box.setOptions(state.pdbox.options, true);
+				pdboxExt.box.dispatchEvent('load', {element: $opener, content: state.pdbox.content});
 			} else {
-				ext.historyEnabled = false; // zavíráme pomocí tlačítka zpět/vpřed, tj. nechceme zapisovat do historie
+				pdboxExt.historyEnabled = false; // zavíráme pomocí tlačítka zpět/vpřed, tj. nechceme zapisovat do historie
 
 				// pokud pdbox není, zavřeme jej (metoda close opět kontroluje, zda je pdbox otevřený)
-				ext.box.close();
+				pdboxExt.box.close();
 			}
 
 			// udržujeme si aktuální stav, díky němu víme, kam se vracet (viz metoda open a push do original) i v případě popstate
 			// upravit až po otevření pdbox (pokud se otevíral, není třeba kontrolovat)
-			ext.lastState = {
+			pdboxExt.lastState = {
 				location: location.href,
 				state: state,
 				title: document.title
