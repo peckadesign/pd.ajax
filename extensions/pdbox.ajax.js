@@ -58,6 +58,11 @@
 	};
 
 
+	var isPdboxRequest = function(ext, settings) {
+		return ('nette' in settings && 'el' in settings.nette && settings.nette.el.is(ext.pdboxSelector)) || settings.pdbox;
+	};
+
+
 	$.nette.ext('pdbox', {
 		init: function () {
 			this.ajaxified = initExt.linkSelector + ', ' + initExt.buttonSelector;
@@ -101,6 +106,7 @@
 					this.box.addEventListener('afterClose', (function () {
 						if (this.xhr) {
 							this.xhr.abort();
+							this.xhr = null;
 						}
 					}).bind(this));
 				}
@@ -109,11 +115,15 @@
 		before: function (xhr, settings) {
 			xhr.setRequestHeader('Pd-Box-Opened', Number(this.box && this.box.isOpen));
 		},
-		start: function (xhr) {
-			if (this.xhr) {
-				this.xhr.abort();
+		start: function (xhr, settings) {
+			// probíhající request rušíme pouze v případě, že nový i probíhající jsou pdbox requesty
+			if (isPdboxRequest(this, settings)) {
+				if (this.xhr) {
+					this.xhr.abort();
+				}
+
+				this.xhr = xhr;
 			}
-			this.xhr = xhr;
 		},
 		success: function (payload, status, xhr, settings) {
 			this.popstate = false;
@@ -124,7 +134,7 @@
 			};
 
 			// pokud success nastal po kliknutí na elementu s class this.pdboxSelector, vyvoláme load událost, nastavíme vlastnosti pdbox a pokud je povolená historie, nahradíme stávající stav naším, kde přidáváme do state vlastnost pdbox
-			if (('nette' in settings && 'el' in settings.nette && settings.nette.el.is(this.pdboxSelector)) || settings.pdbox) {
+			if (isPdboxRequest(this, settings)) {
 				// je pro současný request povolená historie?
 				var requestHistory = (! settings.off || settings.off.indexOf('history') === -1) && historySupported;
 
