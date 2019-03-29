@@ -278,6 +278,9 @@
 
 					return;
 				} else {
+					// Ošetření title při popstate
+					document.title = state.title;
+
 					closePopstateFlag = false;
 				}
 			}
