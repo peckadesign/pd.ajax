@@ -24,7 +24,7 @@
 	"homepage": "https://github.com/peckadesign/pd.ajax",
 	"dependencies": {
 		"jquery": ">=1.12",
-		"nette.ajax.js": ">=2.0 <2.4",
+		"nette.ajax.js": "zipper/nette.ajax.js#~2.4.0",
 		"jquery.pdbox": "git+https://github.com/peckadesign/jquery.pdbox.git#semver:^1.2.0"
 	},
 	"devDependencies": {}
