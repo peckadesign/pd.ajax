@@ -3,6 +3,9 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.4.2
+- Oprava titulku stránky v případě, že pdbox obsahuje redirect.
+
 ### 1.4.1
 - Oprava umístění souborů pro extension `inpCombined` a `inpNumber`.
 

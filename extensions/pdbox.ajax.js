@@ -32,6 +32,7 @@
 
 
 	var closePopstateFlag = false;
+	var pdboxRedirectFlag = false;
 	var historySupported = !! historyExt;
 
 
@@ -47,6 +48,7 @@
 		};
 
 		if (requestHistory) {
+			pdboxRedirectFlag = true;
 			ext.historyEnabled = true;
 		}
 
@@ -99,6 +101,10 @@
 								this.original.push(state);
 							}
 						}
+
+						// Po otevření nastavíme na false (pokud např. před zpracováním redirectu došlo k zavření pdboxu)
+						pdboxRedirectFlag = false;
+
 					}).bind(this));
 
 					this.box.addEventListener('afterClose', this.afterCloseHandler.bind(this));
@@ -187,6 +193,17 @@
 						pdbox: pdbox,
 						ui: (historyExt && historyExt.cache && snippetsExt) ? snippetsExt.findSnippets() : null
 					}), document.title, location.href);
+
+					// Zpracování titulku stránky, pokud byl v pdboxu redirect
+					if (pdboxRedirectFlag) {
+						var titleEl = document.querySelector('head title');
+						var title = titleEl.getAttribute('data-ajax-update') || document.title;
+
+						titleEl.removeAttribute('data-ajax-update');
+						document.title = title;
+
+						pdboxRedirectFlag = false;
+					}
 				}
 
 				this.box.dispatchEvent('load', {element: $opener, content: payload});
