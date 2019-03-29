@@ -3,7 +3,7 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
-### 1.4.0 draft
+### 1.4.0
 - U pdboxu je možné nastavit způsob fungování historie po zavření. Výchozí je, že po zavření přejde prohlížeč zpět do stavu před otevřením a v historii prohlížeče je pdbox možno otevřít tlačítkem vpřed. Pomocí `data-pdbox-history="forwards"` je možné nastavit, že při zavření se vytvoří nový stav do historie, tj. tlačítko zpět v prohlížeči otevře znovu tento pdbox.
 - V jednotlivých extension je v `settings.pd` dostupné pole pro request zapnutých pd extension. 
 - Do extension se neukládá každý `xhr`, ale pouze ty, které opravdu souvisí s `pdboxem`. Stejně tak k rušení dojde pouze v případě, že oba requesty (probíhající i nový) souvisí s `pdboxem`. Opravuje #7.
@@ -11,6 +11,9 @@ Vlastní extensions pro nette.ajax
 
 
 - **Nové extension:** Přidáno extension `replaceState` pro zachování změny url bez vytváření nových stavů. Toto extension je možné použít obecně vždy, když chceme mít aktuální url, ale v historii nechceme vytvářet nový stav. Například přepínání barev produktů nebo formuláře v pdboxu.
+- **Nové extension:** Přidáno extension `suggest` pro obsluhu našeptávače. Pro funkční použití je potřeba na formulář přidat class `js-suggest`, dále je nutné označit input (`js-suggest__input`), našeptávací tlačítko (`js-suggest__btn`) a snippet s výsledky našeptávání (`js-suggest__suggest`).
+- **Nové extension:** Přidáno extension `inpCombined` pro styl inputů s labelem uvnitř.
+- **Nové extension:** Přidáno extension `inpNumber` pro inputy s tlačítky + a &minus;.
 
 :warning: **BC break:** původní výchozí chování historie pdboxu bylo to, které je nyní volitelné, tj. vytváření nového stavu po zavření. Pro zachování tohoto chování je potřeba doplnit zmíněný data atribut `data-pdbox-history="forwards"`.
 
