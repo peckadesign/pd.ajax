@@ -194,7 +194,7 @@
 						ui: (historyExt && historyExt.cache && snippetsExt) ? snippetsExt.findSnippets() : null
 					}), document.title, location.href);
 
-					// Zpracování titulku stránky, pokud byl v pdboxu redirect
+					// Zpracování titulku stránky, pokud byl v pdboxu redirect (v tu chvíli jej zpracováváme s vypnutým history extension)
 					if (pdboxRedirectFlag) {
 						var titleEl = document.querySelector('head title');
 						var title = titleEl.getAttribute('data-ajax-update') || document.title;
@@ -279,7 +279,9 @@
 					return;
 				} else {
 					// Ošetření title při popstate
-					document.title = state.title;
+					if (state.title) {
+						document.title = state.title;
+					}
 
 					closePopstateFlag = false;
 				}
