@@ -1,11 +1,11 @@
 /**
  * nette.ajax.js extension allowing to create disabled-by-deafult extensions
  *
- * @copyright Copyright (c) 2015-2016 Radek Šerý
+ * @copyright Copyright (c) 2015-2019 Radek Šerý
  * @copyright Copyright (c) 2015      Jiří Pudil
  * @license MIT
  *
- * @version 1.0.3
+ * @version 1.4.3
  */
 (function ($, undefined) {
 	var extensions = {};

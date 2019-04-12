@@ -3,6 +3,10 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.4.3
+- V extension `spinner` se nově neodstraňuje spinner z DOM i v případě, že v JSONu AJAXové odpovědi přijde pole `forceReload`. V tu chvíli je chování extension `spinner` totožné s případem, kdy dojde `forceRedirect`.
+- **Nové extension:** Přidáno extension `forceReload`, které zajistí znovunačtení stránky v případě, že v odpovědi přišlo `forceRedirect: true`. Pokud je v odpovědi i `_fid`, je přidáno do URL pro načtení.
+
 ### 1.4.2
 - Oprava titulku stránky v případě, že pdbox obsahuje redirect.
 

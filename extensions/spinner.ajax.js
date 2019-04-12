@@ -26,7 +26,7 @@
 			}
 		},
 		complete: function (xhr, status, settings) {
-			if (! ('forceRedirect' in xhr) && 'spinnerQueue' in settings) {
+			if (! ('forceRedirect' in xhr) && ! ('forceReload' in xhr) && 'spinnerQueue' in settings) {
 				var l = settings.spinnerQueue.length;
 				for (var i = 0; i < l; i++) {
 					settings.spinnerQueue[i].remove();
