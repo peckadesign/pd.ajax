@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2015      Jiří Pudil
  * @license MIT
  *
- * @version 1.4.3
+ * @version 1.5.0
  */
 (function ($, undefined) {
 	var extensions = {};
@@ -23,7 +23,7 @@
 	}, {
 		linkSelector: 'a.ajax',
 		formSelector: 'form.ajax',
-		buttonSelector: 'input.ajax[type="submit"], form.ajax input[type="submit"], button.ajax[type="submit"], form.ajax button[type="submit"], input.ajax[type="image"], form.ajax input[type="image"]'
+		buttonSelector: 'input.ajax[type="submit"], button.ajax[type="submit"], input.ajax[type="image"]'
 	});
 
 	// Allows calling $.nette.pd.ext('foo') to get pd extension context (same as $.nette.ext('bar') for common extension)
@@ -60,12 +60,23 @@
 		}
 		if (settings.nette) {
 			var ext = '';
+
+			// pd extension z elementu
 			if (settings.nette.el.attr('data-ajax-pd')) {
 				ext = settings.nette.el.attr('data-ajax-pd');
 			}
+
+			// Pokud el není formulář, ale existuje formulář, hledáme i na něm
 			if (! settings.nette.isForm && settings.nette.form && settings.nette.form.attr('data-ajax-pd')) {
 				ext = ((ext === '') ? '' : ext + ' ') + settings.nette.form.attr('data-ajax-pd');
 			}
+
+			// Pokud je el formulář a známe odesílací tlačítko, hledáme na něm
+			if (settings.nette.isForm && settings.nette.form.get(0)['nette-submittedBy']) {
+				var btn = settings.nette.form.get(0)['nette-submittedBy'];
+				ext = ((ext === '') ? '' : ext + ' ') + btn.attr('data-ajax-pd');
+			}
+
 			return ext === '' ? [] : ext.split(' ');
 		}
 
