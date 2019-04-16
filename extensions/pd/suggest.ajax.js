@@ -1,17 +1,26 @@
 (function($, undefined) {
+	var CONST_KEY_ESCAPE = 27;
+	var CONST_KEY_DOWN = 40;
+	var CONST_KEY_UP = 38;
+	var CONST_KEY_ENTER = 13;
+
+	var formSelector    = '.js-suggest__form';
+	var inputSelector   = '.js-suggest__input';
+	var btnSelector     = '.js-suggest__btn';
+	var suggestSelector = '.js-suggest__suggest';
+	var itemSelector    = '.js-suggest__item';
 
 	/* Třída pro našeptávač jako takový */
-	var pdSuggest = function(form, options) {
-		var inputSelector   = '.js-suggest__input';
-		var btnSelector     = '.js-suggest__btn';
-		var suggestSelector = '.js-suggest__suggest';
-
+	var pdSuggest = function(suggestBox, options) {
 		var _this = this;
-		this.$form = $(form);
+		this.$suggestBox = $(suggestBox);
+		this.$form = suggestBox.tagName.toLowerCase() === 'form' ? this.$suggestBox : this.$suggestBox.find(formSelector);
 
 		this.$input   = this.$form.find(inputSelector);
 		this.$btn     = this.$form.find(btnSelector);
-		this.$suggest = this.$form.find(suggestSelector);
+		this.$suggest = this.$suggestBox.find(suggestSelector);
+
+		this.ariaActiveId = this.$input.attr('aria-activedescendant');
 
 		this.timer = null;
 		this.hideSuggestTimer = null;
@@ -19,13 +28,14 @@
 		this.minLength = options.minLength || 2;
 		this.timeout = options.timeout || 200;
 
-		this.$form
+		this.$suggestBox
 			.on('keydown', inputSelector, $.proxy(this.handleInputKeydown, this))
-			.on('keyup', inputSelector, $.proxy(this.handleInputKeyup, this));
+			.on('keyup', inputSelector, $.proxy(this.handleInputKeyup, this))
+			.on('mouseenter', itemSelector, $.proxy(this.handleItemMouseenter, this));
 
 		this.$input
 			.data('document-tap-blur', false)
-			.on('focus', $.proxy(this.showSuggest, this))
+			.on('focus', $.proxy(this.handleInputFocus, this))
 			.on('blur', $.proxy(this.hideSuggest, this));
 
 		this.$suggest
@@ -47,44 +57,64 @@
 			.empty();
 	};
 
+	pdSuggest.prototype.changeActiveItem = function($current, $new) {
+		$current
+			.removeClass('js-suggest__item--active')
+			.attr('aria-selected', 'false')
+			.removeAttr('id');
+
+		if ($new) {
+			$new
+				.addClass('js-suggest__item--active')
+				.attr('aria-selected', 'true')
+				.attr('id', this.ariaActiveId);
+		}
+	};
+
 	pdSuggest.prototype.handleInputKeydown = function(e) {
 		// zavření na klávesu escape, posun šipkami v našeptávači, odeslání/zavření enterem
-		var $a;
+		var $item;
 
 		switch (e.keyCode) {
-			case 27: // Escape
+			case CONST_KEY_ESCAPE:
 				e.preventDefault();
-				this.$form.collapsable('collapseAll', e);
+				this.$suggestBox.collapsable('collapseAll', e);
 				break;
-			case 40: // Down
-			case 38: // Up
+
+			case CONST_KEY_DOWN:
+			case CONST_KEY_UP:
 				e.preventDefault();
 
-				$a = this.$form.find('.js-suggest__link');
-				var $active = $a.filter('.js-suggest__link--active');
-				var i = $a.index($active);
+				$item = this.$suggestBox.find(itemSelector);
+				var $active = $item.filter(itemSelector + '--active');
+				var $newActive = $([]);
+				var i = $item.index($active);
 
-				$active.removeClass('js-suggest__link--active');
-				if (i === -1) { // není nic active, vybereme první/poslední
-					if (e.keyCode === 40)
-						$a.first().addClass('js-suggest__link--active');
-					else
-						$a.last().addClass('js-suggest__link--active');
+				if (i === 0 && e.keyCode === CONST_KEY_UP) {} // NOP, aktivní je první + šipka nahoru => nic není aktivní
+				else if (i === -1) {
+					// není nic active, vybereme první/poslední
+					$newActive = (e.keyCode === CONST_KEY_DOWN) ? $item.first() : $item.last();
 				}
-				else if (i === 0 && e.keyCode === 38) {} // NOP, aktivní je první + šipka nahoru => nic není aktivní
 				else {
-					if (e.keyCode === 40)
-						$a.eq(i+1).addClass('js-suggest__link--active');
-					else
-						$a.eq(i-1).addClass('js-suggest__link--active');
+					// jinak vybíráme předchozí / následující
+					$newActive = (e.keyCode === CONST_KEY_DOWN) ? $item.eq(i + 1) : $item.eq(i - 1);
 				}
+
+				this.changeActiveItem($active, $newActive);
 
 				break;
 
-			case 13: // Enter
-				$a = this.$form.find('.js-suggest__link--active');
-				if ($a.length) {
-					location.href = $a.attr('href');
+			case CONST_KEY_ENTER:
+				$item = this.$suggestBox.find(itemSelector + '--active');
+				var $link = $item.find('.js-suggest__link');
+
+				if ($link.length) {
+					if ($link.hasClass('js-pdbox')) {
+						$link.trigger('click');
+					}
+					else {
+						location.href = $link.attr('href');
+					}
 
 					e.preventDefault();
 					e.stopPropagation();
@@ -126,9 +156,24 @@
 			}
 		}
 	};
+	pdSuggest.prototype.handleInputFocus = function(e) {
+		var query = $(e.target).val();
+
+		if (query.length > this.minLength) {
+			this.showSuggest();
+		}
+	};
 
 	pdSuggest.prototype.handleSuggestMousedown = function(e) {
-		e.preventDefault();
+		if (e.target.tagName.toLowerCase() !== 'input') {
+			e.preventDefault();
+		}
+	};
+
+	pdSuggest.prototype.handleItemMouseenter = function(e) {
+		$currentActive = this.$suggestBox.find('.js-suggest__item--active');
+
+		this.changeActiveItem($currentActive, $(e.currentTarget));
 	};
 
 
@@ -174,7 +219,10 @@
 			var ext = this;
 
 			$(ext.selector).each(function() {
-				var suggest = new pdSuggest(this, ext.timeout, ext.minLength);
+				var suggest = new pdSuggest(this, {
+					timeout: ext.timeout,
+					minLength: ext.minLength
+				});
 			});
 		},
 		attachExtension: function ($el) {
