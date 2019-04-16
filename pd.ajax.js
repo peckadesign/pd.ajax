@@ -73,8 +73,8 @@
 
 			// Pokud je el formulář a známe odesílací tlačítko, hledáme na něm
 			if (settings.nette.isForm && settings.nette.form.get(0)['nette-submittedBy']) {
-				var btn = settings.nette.form.get(0)['nette-submittedBy'];
-				ext = ((ext === '') ? '' : ext + ' ') + btn.attr('data-ajax-pd');
+				var $btn = $(settings.nette.form.get(0)['nette-submittedBy']);
+				ext = ((ext === '') ? '' : ext + ' ') + $btn.attr('data-ajax-pd');
 			}
 
 			return ext === '' ? [] : ext.split(' ');
