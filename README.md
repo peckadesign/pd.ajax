@@ -3,6 +3,10 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.5.0
+- AJAXové odesílání formulářů nyní rozlišuje, zda je class `ajax` na formuláři nebo odesílacím tlačítku. Předchozí verze vždy pro odeslání používaly událost `click`, tj. nikdy nedošlo k `submit` události. Nově, pokud je `class="ajax"` na formuláři, dojde k AJAXovému odeslání z události `submit` formuláře. 
+- Spinner z tlačítka z extension `btnSpinner` se neodstraňuje v případě, že v AJAXové odpovědi přišlo `forceReload`.
+
 ### 1.4.3
 - V extension `spinner` se nově neodstraňuje spinner z DOM i v případě, že v JSONu AJAXové odpovědi přijde pole `forceReload`. V tu chvíli je chování extension `spinner` totožné s případem, kdy dojde `forceRedirect`.
 - **Nové extension:** Přidáno extension `forceReload`, které zajistí znovunačtení stránky v případě, že v odpovědi přišlo `forceRedirect: true`. Pokud je v odpovědi i `_fid`, je přidáno do URL pro načtení.

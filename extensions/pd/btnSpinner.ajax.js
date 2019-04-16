@@ -55,7 +55,7 @@
 			}
 		},
 		complete: function (xhr, status, settings) {
-			if (! ('forceRedirect' in xhr) && '$btnSpinner' in settings) {
+			if (! ('forceRedirect' in xhr) && ! ('forceReload' in xhr) && '$btnSpinner' in settings) {
 				settings.$btnSpinner.remove();
 			}
 
