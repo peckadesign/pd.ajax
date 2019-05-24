@@ -40,6 +40,7 @@
 	 * Metoda pro zpracování redirect pole v odpovědi při otevřeném pdboxu.
 	 */
 	var handleRedirect = function(ext, payload, settings, requestHistory) {
+		// Přichystání nového requestu
 		var options = {
 			url: payload.redirect,
 			off: settings.off,
@@ -57,6 +58,16 @@
 			settings.spinnerQueue = [];
 		}
 
+		// Prevence probliknutí URL - než vyřešíme redirect, v URL je již zapsáno z history extension
+		var url = getPdboxUrl(ext.originalState, location.href);
+
+		history.replaceState($.extend(history.state || {}, {
+			title: document.title,
+			pdbox: true, // dočasná hodnota, která by nás neměla potrápit
+			ui: null // neřešíme UI, protože nic nového nepřišlo
+		}), document.title, url);
+
+		// Odešleme redirect request
 		$.nette.ajax(options);
 	};
 
@@ -74,6 +85,78 @@
 	};
 
 
+	var getPdboxUrl = function(originalState, newUrl) {
+		if (originalState === null || ! originalState.location) {
+			return newUrl;
+		}
+
+		// Pokud předchozí pdbox prošel přes redirect, url už je změněná
+		var pdboxUrl = getUrlParameterByName('pdbox', newUrl);
+		if (pdboxUrl) {
+			return newUrl;
+		}
+
+		var s = '?';
+		if ((i = originalState.location.search(/\?/)) !== -1) {
+			s = '&';
+		}
+
+		return originalState.location + s + 'pdbox=' + encodeURIComponent(newUrl);
+	};
+
+
+	var getUrlParameterByName = function(name, url) {
+		if (! url) {
+			url = window.location.href;
+		}
+
+		name = name.replace(/[\[\]]/g, '\\$&');
+		var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+		var results = regex.exec(url);
+
+		if (! results) {
+			return null;
+		}
+		if (! results[2]) {
+			return '';
+		}
+
+		return decodeURIComponent(results[2].replace(/\+/g, ' '));
+	};
+
+
+	var removeUrlParameterByName =function (name, url) {
+		if (! url) {
+			url = window.location.href;
+		}
+
+		var parameterStart = url.indexOf('?' + name + '=');
+
+		if (parameterStart === -1) {
+			parameterStart = url.indexOf('&' + name + '=');
+		}
+
+		if (parameterStart > -1) {
+			// Odstranění parametru
+			var parameterEnd = url.indexOf('&', parameterStart + 1);
+
+			if (parameterEnd === -1) {
+				url = url.substring(0, parameterStart);
+			} else {
+				url = url.substring(0, parameterStart) + url.substring(parameterEnd + 1);
+			}
+
+			// Ořízneme koncové '?' nebo '&'
+			if (url[url.length - 1] === '?' || url[url.length - 1] === '&') {
+				url = url.slice(0, -1);
+			}
+
+		}
+
+		return url;
+	};
+
+
 	$.nette.ext('pdbox', {
 		init: function () {
 			this.ajaxified = initExt.linkSelector + ', ' + initExt.buttonSelector;
@@ -87,19 +170,18 @@
 							mode = PDBOX_HISTORY_BACKWARDS;
 						}
 
-						// pokud je mód historie dopředný, při otevření pdbox uložíme kontext, který je pod pdbox, aby
-						// bylo možné po zavření vše vrátit zpět
-						if (mode === PDBOX_HISTORY_FORWARDS) {
-							if (this.popstate) {
-								this.original.push(this.lastState);
-							} else {
-								var state = {
-									location: location.href,
-									state: history.state,
-									title: document.title
-								};
-								this.original.push(state);
-							}
+						// uložíme si kontext, aby bylo možné vytvořit URL pro pdbox obsahující původní URL
+						if (this.popstate) {
+							// TODO zkontrolovat!
+							// this.original.push(this.lastState);
+							this.originalState = this.lastState;
+
+						} else {
+							this.originalState = {
+								location: location.href,
+								state: history.state,
+								title: document.title
+							};
 						}
 
 						// Po otevření nastavíme na false (pokud např. před zpracováním redirectu došlo k zavření pdboxu)
@@ -114,6 +196,33 @@
 							this.xhr = null;
 						}
 					}).bind(this));
+				}
+
+				var pdboxUrl = getUrlParameterByName('pdbox');
+
+				if (pdboxUrl) {
+					// TODO po zavření pdboxu, který se nyní otevírá:
+					//  - nefunguje jeho opětovné otevření přes historii prohlížeče
+					//  - se zapisuje nový stav do prohlížeče (pokud nezavřu zase tlačítkem zpět; pokud ano, bude fungovat zase otevření?)
+
+					// TODO otestovat proces:
+					//  - A -> B v pdboxu -> C -> browser zpět, tj. B v pdboxu -> browser zpět, tj. A
+					//  - A -> B v pdboxu -> refresh -> browser zpět
+					//  - po předchozích krocích vyzkoušet browser vpřed
+
+					this.box.open();
+					this.historyEnabled = true;
+					this.originalState.location = removeUrlParameterByName('pdbox', this.originalState.location);
+
+					mode = PDBOX_HISTORY_FORWARDS;
+
+					// TODO všechny options nastavované přes data atribut je potřeba načíst z URL (a nejprve je tam i uložit :) )
+
+					$.nette.ajax({
+						url: pdboxUrl,
+						off: ['history'],
+						pdbox: true
+					});
 				}
 			}
 		},
@@ -188,11 +297,13 @@
 						options: this.box.options
 					};
 
+					var url = getPdboxUrl(this.originalState, location.href);
+
 					history.replaceState($.extend(history.state || {}, {
 						title: document.title,
 						pdbox: pdbox,
 						ui: (historyExt && historyExt.cache && snippetsExt) ? snippetsExt.findSnippets() : null
-					}), document.title, location.href);
+					}), document.title, url);
 
 					// Zpracování titulku stránky, pokud byl v pdboxu redirect (v tu chvíli jej zpracováváme s vypnutým history extension)
 					if (pdboxRedirectFlag) {
@@ -230,8 +341,7 @@
 
 				} else if (mode === PDBOX_HISTORY_FORWARDS) {
 
-					var state = this.original.pop();
-					this.original = [];
+					var state = this.originalState;
 					if (state) {
 						if (history.state === undefined || (history.state.href !== state.location)) { // zavření pdbox tlačítkem zpět pop je stejný stav, jako aktuální a nechceme jej zduplikovat
 							history.pushState(state.state, state.title, state.location);
@@ -245,6 +355,7 @@
 							};
 						}
 					}
+					this.original = [];
 				}
 
 				this.historyEnabled = false;
@@ -252,6 +363,7 @@
 		},
 		ajaxified: '', // selector všeho, co by mělo být odesíláno ajaxem
 		original: [], // zásobník stavů "pod pdbox" - po zavření pdbox musíme nastavit URL, title a stav do historie přes pushState
+		originalState: null, // stav "pod pdboxem"
 		lastState: null,
 		box: null,
 		xhr: null
