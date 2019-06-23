@@ -2,6 +2,8 @@
 Vlastní extensions pro nette.ajax
 
 ## Changelog
+### 1.4.5
+- úprava dependency nette.ajax.js v package.json
 
 ### 1.4.4
 - V extension `btnSpinner` se nově neodstraňuje spinner z DOM i v případě, že v JSONu AJAXové odpovědi přijde pole `forceReload`. V tu chvíli je chování extension `btnSpinner` totožné s případem, kdy dojde `forceRedirect`.
