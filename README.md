@@ -2,6 +2,10 @@
 Vlastní extensions pro nette.ajax
 
 ## Changelog
+### 1.4.6
+- Přidána chybějící závislost na `nette-forms`.
+- Zjednodušení zápisu závislosti na `peckadesign/pdbox`.
+
 ### 1.4.5
 - úprava dependency nette.ajax.js v package.json
 
