@@ -10,8 +10,8 @@
 	"main": "pd.ajax.js",
 	"license": "MIT",
 	"dependencies": {
-		"jquery": ">=1.12",
-		"nette-forms": "~2.2",
+		"jquery": ">=1.12.0",
+		"nette-forms": "^2.2.0",
 		"nette.ajax.js": "zipper/nette.ajax.js#~2.4.0",
 		"jquery.pdbox": "peckadesign/jquery.pdbox#^1.2.0"
 	}

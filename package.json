@@ -23,9 +23,10 @@
 	"license": "MIT",
 	"homepage": "https://github.com/peckadesign/pd.ajax",
 	"dependencies": {
-		"jquery": ">=1.12",
+		"jquery": ">=1.12.0",
+		"nette-forms": "nette/forms#semver:^2.2.0",
 		"nette.ajax.js": "zipper/nette.ajax.js#semver:~2.4.0",
-		"jquery.pdbox": "git+https://github.com/peckadesign/jquery.pdbox.git#semver:^1.2.0"
+		"jquery.pdbox": "peckadesign/jquery.pdbox.git#semver:^1.2.0"
 	},
 	"devDependencies": {}
 }
