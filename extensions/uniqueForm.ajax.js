@@ -12,7 +12,7 @@
 		init: function () {
 			var uniqueForm = this;
 			$(document).on('submit', 'form', function () {
-				if (this.target === '_blank' || (this.target === '_parent' && window.parent !== window)) {
+				if ($(this).filter('[data-ajax-off*="uniqueForm"]').length || this.target === '_blank' || (this.target === '_parent' && window.parent !== window)) {
 					return true;
 				}
 
