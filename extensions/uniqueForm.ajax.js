@@ -12,7 +12,7 @@
 		init: function () {
 			var uniqueForm = this;
 			$(document).on('submit', 'form', function () {
-				if ((this.getAttribute('data-ajax-off') && (' ' + this.getAttribute('data-ajax-off') + ' ').indexOf(' uniqueForm ') > -1) || this.target === '_blank' || (this.target === '_parent' && window.parent !== window)) {
+				if (uniqueForm.isExtensionOff(this) || this.target === '_blank' || (this.target === '_parent' && window.parent !== window)) {
 					return true;
 				}
 
@@ -33,6 +33,14 @@
 	}, {
 		timeout: 60000,
 		buttonClassDisabled: null,
+		isExtensionOff: function(form) {
+			var button = form['nette-submittedBy'];
+
+			return (button && this.isOffByDataAttribute(button)) || this.isOffByDataAttribute(form);
+		},
+		isOffByDataAttribute: function(el) {
+			return (el.getAttribute('data-ajax-off') && (' ' + el.getAttribute('data-ajax-off') + ' ').indexOf(' uniqueForm ') > -1);
+		},
 		formSubmitHandler: function () {
 			return false;
 		},
@@ -90,4 +98,3 @@
 		}
 	});
 })(window.jQuery, window.document);
-
