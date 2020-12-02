@@ -22,19 +22,33 @@
 		}
 	}, {
 		addFid: function(href, _fid) {
-			var s = '?';
+			var hashStart = href.indexOf('#');
+			var hash = '';
+			var c = '?';
 
-			if ((i = href.search(/\?/)) !== -1) {
-				s = '&';
+			if (hashStart > -1) {
+				hash = href.substring(hashStart);
+				href = href.substring(0, hashStart);
 			}
 
-			href += s + '_fid=' + _fid;
+			if ((i = href.search(/\?/)) !== -1) {
+				c = '&';
+			}
 
-			return href;
+			href += c + '_fid=' + _fid;
+
+			return href + hash;
 		},
 		removeFid: function(href) {
 			// je v URL _fid?
 			var fidStart = href.indexOf('_fid=');
+			var hashStart = href.indexOf('#');
+			var hash = '';
+
+			if (hashStart > -1) {
+				hash = href.substring(hashStart);
+				href = href.substring(0, hashStart);
+			}
 
 			if (fidStart > -1) {
 				// Odstranění _fid parametru
@@ -53,7 +67,7 @@
 
 			}
 
-			return href;
+			return href + hash;
 		}
 	});
 

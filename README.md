@@ -2,6 +2,9 @@
 Vlastní extensions pro nette.ajax
 
 ## Changelog
+### 1.4.8
+- Oprava chyby [#23](https://github.com/peckadesign/pd.ajax/issues/23), kdy extension `forceReload` v případě kombinace hashe a parametrů rozbíjelo URL.
+
 ### 1.4.7
 - Extension `uniqueForm` je možno vypnout i na neeajaxových formulářích a to stejným způsobem, jako jinde, tj. pomocí `data-ajax-off="uniqueForm"` buď na formuláři, nebo na tlačítku. Řeší issue [#21](https://github.com/peckadesign/pd.ajax/issues/21).
 
