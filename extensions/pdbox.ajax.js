@@ -264,8 +264,12 @@
 		var pdboxExt = $.nette.ext('pdbox');
 		var popstateHandler = function (e) {
 			var state = e.originalEvent.state || historyExt.initialState;
-			var isPdboxState = 'pdbox' in state && state.pdbox;
 
+			if (typeof state === 'undefined' || pdboxExt.box === null) {
+				return;
+			}
+
+			var isPdboxState = 'pdbox' in state && state.pdbox;
 			pdboxExt.popstate = true;
 
 			// Nevíme, o kolik stavů jít zpět, proto postupně jdeme po jednom, dokud se nedostaneme ke stavu před
