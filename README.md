@@ -2,6 +2,9 @@
 Vlastní extensions pro nette.ajax
 
 ## Changelog
+### 1.4.9
+- Ošetření popstate handleru v případě, že není `state` nebo instance `pdBox`.
+
 ### 1.4.8
 - Oprava chyby [#23](https://github.com/peckadesign/pd.ajax/issues/23), kdy extension `forceReload` v případě kombinace hashe a parametrů rozbíjelo URL.
 
