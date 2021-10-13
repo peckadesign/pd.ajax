@@ -78,12 +78,12 @@
 				.data('disabled', false)
 				.removeClass('inp-number__btn--disabled');
 
-			if (value === this.min) {
+			if (value === this.min || this.$input.is(':disabled')) {
 				this.$dec
 					.data('disabled', true)
 					.addClass('inp-number__btn--disabled');
 			}
-			if (value === this.max) {
+			if (value === this.max || this.$input.is(':disabled')) {
 				this.$inc
 					.data('disabled', true)
 					.addClass('inp-number__btn--disabled');
@@ -119,7 +119,8 @@
 			e.preventDefault();
 
 			// už zpracováváme z click event -> desktop, takže longtap ignorujeme
-			if (e.type === 'longtap' && this.rapidChangeFlag) {
+			// nebo je tlačítko disabled
+			if ((e.type === 'longtap' && this.rapidChangeFlag) || this.isClickedBtnDisabled(e)) {
 				return;
 			}
 
@@ -198,6 +199,7 @@
 				.find(this.selector)
 				.each(function() {
 					var inpNumber = new InpNumber(this);
+					$(this).data('inpNumber', inpNumber);
 				});
 		}
 	});

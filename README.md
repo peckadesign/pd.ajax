@@ -2,6 +2,10 @@
 Vlastní extensions pro nette.ajax
 
 ## Changelog
+### 1.4.10
+- Extension `inpNumber` respektuje při inicializaci `disabled` na inputu. Programová změna za běhu není reflektována, je nutné zavolat ručně metodu `$('#foo').data('inpNumber').setDisabledBtns()` pro daný `.inp-number`.
+
+## Changelog
 ### 1.4.9
 - Ošetření popstate handleru v případě, že není `state` nebo instance `pdBox`.
 
