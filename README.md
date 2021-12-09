@@ -2,10 +2,12 @@
 Vlastní extensions pro nette.ajax
 
 ## Changelog
+### 1.4.11
+- Oprava procházení zpět historií přes pdbox. Pokud otevřeme pdbox s historií v pdboxu (např. předkošík) a z něj klikneme na další stránku (např. do košíku), otevře se při použití zpět prohlížeče nejprve správně předkošík, ale při dalším zpět se pouze změní url a stránka se nezmění. Tento release to opravuje.
+
 ### 1.4.10
 - Extension `inpNumber` respektuje při inicializaci `disabled` na inputu. Programová změna za běhu není reflektována, je nutné zavolat ručně metodu `$('#foo').data('inpNumber').setDisabledBtns()` pro daný `.inp-number`.
 
-## Changelog
 ### 1.4.9
 - Ošetření popstate handleru v případě, že není `state` nebo instance `pdBox`.
 

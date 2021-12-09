@@ -286,13 +286,19 @@
 					if (state.title) {
 						document.title = state.title;
 					}
-
-					closePopstateFlag = false;
 				}
+
+				closePopstateFlag = false;
 			}
 
-			// při popstate kontrolujeme, zda nový stav má nastavenou vlastnost pdbox, pokud ano, otevřeme jej (metoda open kontroluje, zda již otevřený není), vložíme obsah a spustíme událost load
-			if (isPdboxState) {
+			// Při popstate kontrolujeme, zda nový stav má nastavenou vlastnost pdbox, pokud ano, otevřeme jej (metoda
+			// open kontroluje, zda již otevřený není), vložíme obsah a spustíme událost load.
+			// Pokud pdbox je definovaný už v initialState, pak to znamená, že jsme v historii šli reloadem na stav,
+			// který byl původně v pdboxu. V takovém případě pdbox neotevíráme, protože by jinak při dalším procházení
+			// zpět nedošlo později k reloadu stránky (neprošla by podmínka `! pdboxExt.box.isOpen`). Efektivně to tedy
+			// znamená, že při procházení zpět se nikdy pdbox neotevře, pokud v mezičase došlo k načtení jiné stránky
+			// klasickým způsobem (mimo ajax, mimo pdbox).
+			if (isPdboxState && ! historyExt.initialState.pdbox) {
 				pdboxExt.historyEnabled = true; // protože jde o popstate, jde o pdbox s historií (pokud je to pdbox, není třeba řešit tady), tj. nastavíme historyEnabled na true, aby po zavření křížkem došlo k pushState
 
 				// předáváme virtuální DOM element, který není skutečným zdrojem otevření, ale má totožné data atributy, o které nám jde
@@ -304,6 +310,11 @@
 				pdboxExt.box.dispatchEvent('load', {element: $opener, content: state.pdbox.content});
 			} else {
 				pdboxExt.historyEnabled = false; // zavíráme pomocí tlačítka zpět/vpřed, tj. nechceme zapisovat do historie
+
+				// Pokud initialState byl v pdboxu, pak při načtení určitě nebyl otevřen, tj. musíme reloadovat
+				if (historyExt.initialState.pdbox) {
+					window.location.reload();
+				}
 
 				// pokud pdbox není, zavřeme jej (metoda close opět kontroluje, zda je pdbox otevřený)
 				pdboxExt.box.close();
