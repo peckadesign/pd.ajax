@@ -2,6 +2,20 @@
 Vlastní extensions pro nette.ajax
 
 ## Changelog
+
+### 1.4.12
+- **Nové extension:** Přidáno extension `cookieConsent`, které po odeslání formuláře na základě data atributů spustí na webu scripty z daných kategorií. V odeslaném formuláři se hledají checkboxy s data atributem `data-cookie-consent-category`, jehož obsahem je název kategorie. Tento název se pak využívá na script tagu v jiném data atributu. Spuštění funguje jak pro inline JS, tak pro externí JS. Například:
+  ```html
+  <input n:name="marketing" data-cookie-consent-category="marketing">
+  
+  ...
+  
+  <script type="text/plain" data-cookie-consent="marketing">
+      (function () { /* ... */ })();
+  </script>
+  <script type="text/plain" data-cookie-consent="marketing" src="/js/marketing.js"></script>
+```
+
 ### 1.4.11
 - Oprava procházení zpět historií přes pdbox. Pokud otevřeme pdbox s historií v pdboxu (např. předkošík) a z něj klikneme na další stránku (např. do košíku), otevře se při použití zpět prohlížeče nejprve správně předkošík, ale při dalším zpět se pouze změní url a stránka se nezmění. Tento release to opravuje.
 
