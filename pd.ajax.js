@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2015      Jiří Pudil
  * @license MIT
  *
- * @version 1.4.11
+ * @version 1.4.12
  */
 (function ($, undefined) {
 	var extensions = {};
