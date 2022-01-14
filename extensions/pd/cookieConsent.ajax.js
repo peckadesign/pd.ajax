@@ -68,13 +68,13 @@
 			script.remove();
 		},
 		closeCookieConsent: function (settings) {
-			var $modal = settings.nette.form.closest('.js-cookie-modal');
-			var closingDuration = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pdbox-closing-duration') || 0);
+			var $consentEl = settings.nette.form.closest('.js-cookie-consent');
+			var closingDuration = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cookie-consent-closing-duration') || 0);
 
-			$modal.addClass('cookie-modal--close');
+			$consentEl.addClass('js-cookie-consent--close');
 
 			setTimeout(function() {
-				$modal.remove();
+				$consentEl.remove();
 			}, closingDuration);
 		}
 	});
