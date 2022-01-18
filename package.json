@@ -2,7 +2,7 @@
 	"name": "pd.ajax",
 	"title": "pd.ajax",
 	"description": "Collection of nette ajax extensions, including `pd` for creating disabled-by-deafult extensions",
-	"version": "1.4.12",
+	"version": "1.4.13",
 	"author": "PeckaDesign, s.r.o <support@peckadesign.cz>",
 	"contributors": [
 		"Radek Šerý <radek.sery@peckadesign.cz>",
@@ -25,7 +25,7 @@
 	"dependencies": {
 		"jquery": ">=1.12.0",
 		"nette-forms": "nette/forms#semver:^2.2.0",
-		"nette.ajax.js": "zipper/nette.ajax.js#semver:~2.4.0",
+		"nette.ajax.js": "zipper/nette.ajax.js#semver:^2.4.0",
 		"jquery.pdbox": "peckadesign/jquery.pdbox.git#semver:^1.2.0"
 	},
 	"devDependencies": {}
