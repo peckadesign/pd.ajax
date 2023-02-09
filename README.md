@@ -3,6 +3,9 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.4.14
+- Extension cookieConsent při zavírání modálu vyvolává dvě události - `cookieConsentBeforeClose` a `cookieConsentAfterClose`.
+
 ### 1.4.13
 - Dependency update, povolení vyšší verze `nette.ajax.js` (`^2.4.0`).
 

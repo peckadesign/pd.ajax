@@ -71,10 +71,13 @@
 			var $consentEl = settings.nette.form.closest('.js-cookie-consent');
 			var closingDuration = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cookie-consent-closing-duration') || 0);
 
+			document.dispatchEvent(new CustomEvent('cookieConsentBeforeClose', { bubbles: true }))
+
 			$consentEl.addClass('js-cookie-consent--close');
 
 			setTimeout(function() {
 				$consentEl.remove();
+				document.dispatchEvent(new CustomEvent('cookieConsentAfterClose', { bubbles: true }))
 			}, closingDuration);
 		}
 	});
