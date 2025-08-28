@@ -3,6 +3,9 @@ Vlastní extensions pro nette.ajax
 
 ## Changelog
 
+### 1.4.15
+- Dependency update, povolení vyšší verze `jquery.pdbox (v2.0.0)`
+
 ### 1.4.14
 - Extension cookieConsent při zavírání modálu vyvolává dvě události - `cookieConsentBeforeClose` a `cookieConsentAfterClose`.
 
