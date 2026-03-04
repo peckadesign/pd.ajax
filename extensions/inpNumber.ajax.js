@@ -27,14 +27,14 @@
 
 		// bind handlers
 		this.$btns
-			.on('click', $.proxy(this.handleClick, this))
+			.on('click', this.handleClick.bind(this))
 			.on('contextmenu', function(e) { e.preventDefault(); }) // longtap na Android zařízeních otevírá menu; pro iOS je nutné uvést v css -webkit-touch-callout: none;
-			.on('mousedown longtap', $.proxy(this.startRapidChange, this))
-			.on('mouseup mouseleave touchend touchcancel', $.proxy(this.stopRapidChange, this));
+			.on('mousedown longtap', this.startRapidChange.bind(this))
+			.on('mouseup mouseleave touchend touchcancel', this.stopRapidChange.bind(this));
 
 		this.$input
-			.on('change', $.proxy(this.handleChange, this)) // mouseup není vyvoláno, pokud z tlačítka sjedeme, proto mouseleave
-			.on('focus', $.proxy(this.handleFocus, this));
+			.on('change', this.handleChange.bind(this)) // mouseup není vyvoláno, pokud z tlačítka sjedeme, proto mouseleave
+			.on('focus', this.handleFocus.bind(this));
 	};
 
 	InpNumber.prototype = {

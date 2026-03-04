@@ -49,7 +49,7 @@
 			var $form = $(form);
 			clearTimeout($form.data('uniqueFormTimeout'));
 			$form.removeData('uniqueFormTimeout')
-				.bind('submit', uniqueForm.formSubmitHandler)
+				.on('submit', uniqueForm.formSubmitHandler)
 			;
 			setTimeout(function () {
 				// disabled je třeba nastavit opožděně, aby formulář odeslal v POST requestu i submit button
@@ -63,7 +63,7 @@
 			var $form = $(form);
 			clearTimeout($form.data('uniqueFormTimeout'));
 			$form.removeData('uniqueFormTimeout')
-				.unbind('submit', uniqueForm.formSubmitHandler)
+				.off('submit', uniqueForm.formSubmitHandler)
 			;
 
 			setTimeout(function () {

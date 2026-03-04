@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2015      Jiří Pudil
  * @license MIT
  *
- * @version 1.4.15
+ * @version 1.5.0
  */
 (function ($, undefined) {
 	var extensions = {};
@@ -36,7 +36,7 @@
 			} else {
 				var extension = {};
 				$.each(callbacks, function (event, callback) {
-					extension[event] = $.proxy(callback, context);
+					extension[event] = callback.bind(context);
 				});
 				extensions[name] = extension;
 				contexts[name] = $.extend(context ? context : {}, {

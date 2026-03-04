@@ -20,16 +20,16 @@
 		this.timeout = options.timeout || 200;
 
 		this.$form
-			.on('keydown', inputSelector, $.proxy(this.handleInputKeydown, this))
-			.on('keyup', inputSelector, $.proxy(this.handleInputKeyup, this));
+			.on('keydown', inputSelector, this.handleInputKeydown.bind(this))
+			.on('keyup', inputSelector, this.handleInputKeyup.bind(this));
 
 		this.$input
 			.data('document-tap-blur', false)
-			.on('focus', $.proxy(this.showSuggest, this))
-			.on('blur', $.proxy(this.hideSuggest, this));
+			.on('focus', this.showSuggest.bind(this))
+			.on('blur', this.hideSuggest.bind(this));
 
 		this.$suggest
-			.on('mousedown', $.proxy(this.handleSuggestMousedown, this));
+			.on('mousedown', this.handleSuggestMousedown.bind(this));
 
 		this.$form.data('pdSuggest', this);
 	};
